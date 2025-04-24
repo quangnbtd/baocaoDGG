@@ -107,7 +107,7 @@
         <!-- KPI: Market Size -->
         <div class="kpi-card rounded-xl p-5 shadow flex flex-col animate-fadein" style="animation-delay:0ms;">
           <div class="text-gray-600 text-sm mb-0.5 flex items-center">
-            <i class="fas fa-coins text-yellow-400 mr-2"></i>Quy mô thị trường 2024
+            <i class="fas fa-coins text-yellow-400 mr-2"></i>Quy mô thị trường trung bình năm
           </div>
           <div class="font-bold text-2xl text-blue-900 mb-1">174,8 <span class="text-lg">tỷ ₫</span></div>
           <div class="flex items-center text-green-600 text-sm font-semibold"><i class="fas fa-arrow-up mr-1"></i>+16,8% CAGR</div>
@@ -123,7 +123,7 @@
         <!-- KPI: E-commerce Channel -->
         <div class="kpi-card rounded-xl p-5 shadow flex flex-col animate-fadein" style="animation-delay:100ms;">
           <div class="text-gray-600 text-sm mb-0.5 flex items-center">
-            <i class="fas fa-store text-pink-400 mr-2"></i>Top Sàn TMĐT 2024
+            <i class="fas fa-store text-pink-400 mr-2"></i>Top Sàn 
           </div>
           <div class="font-bold text-xl text-blue-900 mb-1">Shopee (58.3%), TikTok Shop (23.7%)</div>
           <div class="flex items-center text-gray-700 text-xs"><i class="fas fa-trophy text-amber-500 mr-1"></i>Đứng đầu phân phối sản phẩm</div>
@@ -485,7 +485,7 @@
   new Chart(document.getElementById('platformRevenueChart'),{
     type:'bar',
     data:{
-      labels:['Shopee','TikTok Shop','Lazada','Tiki','Sendo'],
+      labels:['Shopee','TikTok Shop','Lazada','Tiki','Khác'],
       datasets:[
         {label:'Doanh thu (tỷ VNĐ)',data:[101.9,41.4,18.2,9.1,4.2],
         backgroundColor:['#ef4444','#a21caf','#06b6d4','#2563eb','#eab308']}
@@ -502,7 +502,7 @@
   new Chart(document.getElementById('conversionRateChart'),{
     type:'bar',
     data:{
-      labels:['TikTok Shop','Shopee','Tiki','Lazada','Sendo'],
+      labels:['TikTok Shop','Shopee','Tiki','Lazada','Khác'],
       datasets:[{
         label:'Tỷ lệ chuyển đổi (%)',
         data:[4.7,3.2,3.1,2.8,2.4],
