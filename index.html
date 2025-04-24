@@ -1,0 +1,703 @@
+# BÁO CÁO THỊ TRƯỜNG KHỬ MÙI TẨY ẨM MỐC PHÒNG ỐC
+## THƯƠNG MẠI ĐIỆN TỬ VIỆT NAM (2020-2025)
+
+```html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Thị Trường Khử Mùi Tẩy Ẩm Mốc</title>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --secondary: #34a853;
+            --warning: #fbbc04;
+            --danger: #ea4335;
+            --light: #f8f9fa;
+            --dark: #202124;
+            --gray: #5f6368;
+        }
+        
+        body, html {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #202124;
+            background-color: #f8f9fa;
+        }
+        
+        .report-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+        
+        .report-header {
+            background: linear-gradient(135deg, #1a73e8, #34a853);
+            color: white;
+            padding: 40px;
+            position: relative;
+        }
+        
+        .report-title {
+            font-size: 32px;
+            margin: 0;
+            font-weight: 500;
+        }
+        
+        .report-subtitle {
+            margin-top: 8px;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .report-date {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .exec-summary {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-left: 5px solid var(--primary);
+            margin: 30px;
+        }
+        
+        .exec-summary h2 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        
+        .metrics-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 20px 30px;
+        }
+        
+        .metric-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            width: calc(25% - 20px);
+            margin-bottom: 20px;
+            border-top: 4px solid var(--primary);
+        }
+        
+        .metric-card.green {
+            border-top-color: var(--secondary);
+        }
+        
+        .metric-card.yellow {
+            border-top-color: var(--warning);
+        }
+        
+        .metric-card.red {
+            border-top-color: var(--danger);
+        }
+        
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--dark);
+        }
+        
+        .metric-label {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .metric-trend {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        
+        .trend-up {
+            color: var(--secondary);
+        }
+        
+        .trend-down {
+            color: var(--danger);
+        }
+        
+        .trend-icon {
+            margin-right: 5px;
+        }
+        
+        .chart-container {
+            margin: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        
+        .chart-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .chart-box {
+            width: calc(50% - 15px);
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .chart-placeholder {
+            height: 250px;
+            background: #e8eaed;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            font-style: italic;
+        }
+        
+        .section {
+            margin: 40px 30px;
+        }
+        
+        .section-title {
+            position: relative;
+            font-size: 22px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 80px;
+            height: 3px;
+            background: var(--primary);
+        }
+        
+        .insights-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .insight-card {
+            width: calc(50% - 15px);
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+        
+        .insight-header {
+            background: var(--light);
+            padding: 15px 20px;
+            border-bottom: 1px solid #e8eaed;
+        }
+        
+        .insight-title {
+            margin: 0;
+            font-size: 18px;
+            color: var(--dark);
+        }
+        
+        .insight-body {
+            padding: 20px;
+        }
+        
+        .insight-stat {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e8eaed;
+        }
+        
+        .data-table th {
+            background-color: var(--light);
+            font-weight: 500;
+            color: var(--gray);
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .recommendation-container {
+            margin: 30px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 30px;
+            border-left: 5px solid var(--secondary);
+        }
+        
+        .rec-item {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .rec-icon {
+            margin-right: 15px;
+            background: var(--secondary);
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .rec-content h4 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        
+        .rec-content p {
+            margin: 0;
+            color: var(--gray);
+        }
+        
+        .footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .metric-card {
+                width: calc(50% - 15px);
+            }
+            
+            .chart-box, .insight-card {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .metric-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <!-- Phần đầu báo cáo -->
+        <div class="report-header">
+            <div class="report-date">Tháng 4, 2025</div>
+            <h1 class="report-title">Báo Cáo Thị Trường Khử Mùi Tẩy Ẩm Mốc Phòng Ốc</h1>
+            <div class="report-subtitle">Phân tích thị trường thương mại điện tử Việt Nam (2020-2025)</div>
+        </div>
+        
+        <!-- Tóm tắt điều hành -->
+        <div class="exec-summary">
+            <h2>Tóm Tắt Điều Hành</h2>
+            <p>Thị trường khử mùi tẩy ẩm mốc phòng ốc tại Việt Nam đang trong giai đoạn phát triển mạnh mẽ với tốc độ tăng trưởng kép hàng năm (CAGR) ước tính 15.6% giai đoạn 2025-2030. Quy mô thị trường trên kênh TMĐT hiện đạt 409.5 tỷ đồng (2024) và dự kiến đạt 978.7 tỷ đồng vào năm 2030.</p>
+            <p>Thị trường này có tiềm năng lớn nhờ đặc thù khí hậu Việt Nam, xu hướng đô thị hóa và sự gia tăng nhận thức về sức khỏe. Các sàn thương mại điện tử như Shopee và TikTok Shop đang dẫn đầu với tổng thị phần trên 80%.</p>
+        </div>
+        
+        <!-- Các chỉ số chính -->
+        <div class="metrics-row">
+            <div class="metric-card">
+                <div class="metric-label">Quy mô thị trường TMĐT</div>
+                <div class="metric-value">409.5 tỷ</div>
+                <div class="metric-trend trend-up">
+                    <span class="trend-icon">↑</span> Tăng 19% (2024)
+                </div>
+            </div>
+            
+            <div class="metric-card green">
+                <div class="metric-label">CAGR dự báo</div>
+                <div class="metric-value">15.6%</div>
+                <div class="metric-trend">
+                    Giai đoạn 2025-2030
+                </div>
+            </div>
+            
+            <div class="metric-card yellow">
+                <div class="metric-label">Thị phần máy hút ẩm</div>
+                <div class="metric-value">57.0%</div>
+                <div class="metric-trend trend-up">
+                    <span class="trend-icon">↑</span> Tăng 5.3% (YoY)
+                </div>
+            </div>
+            
+            <div class="metric-card red">
+                <div class="metric-label">Tỷ lệ chuyển đổi TikTok</div>
+                <div class="metric-value">4.7%</div>
+                <div class="metric-trend trend-up">
+                    <span class="trend-icon">↑</span> Tăng 1.2% (YoY)
+                </div>
+            </div>
+        </div>
+        
+        <!-- Phân tích thị trường -->
+        <div class="section">
+            <h2 class="section-title">Phân Tích Thị Trường</h2>
+            
+            <div class="chart-row">
+                <div class="chart-box">
+                    <h3 class="chart-title">Cơ cấu thị trường theo phân khúc sản phẩm (2024)</h3>
+                    <div class="chart-placeholder">[Biểu đồ tròn: Sản phẩm khử mùi (24.3%), Sản phẩm tẩy ẩm mốc (18.7%), Sản phẩm hút ẩm (57.0%)]</div>
+                </div>
+                
+                <div class="chart-box">
+                    <h3 class="chart-title">Dự báo tăng trưởng thị trường (2024-2030)</h3>
+                    <div class="chart-placeholder">[Biểu đồ đường: Tăng trưởng từ 409.5 tỷ (2024) đến 978.7 tỷ (2030)]</div>
+                </div>
+                
+                <div class="chart-box">
+                    <h3 class="chart-title">Phân bố nhu cầu theo vùng miền (2024)</h3>
+                    <div class="chart-placeholder">[Biểu đồ cột: Miền Bắc (46.8%), Miền Trung (24.3%), Miền Nam (28.9%)]</div>
+                </div>
+                
+                <div class="chart-box">
+                    <h3 class="chart-title">Thị phần các sàn TMĐT (2024)</h3>
+                    <div class="chart-placeholder">[Biểu đồ thanh: Shopee (57.8%), TikTok Shop (24.0%), Lazada (10.4%), Tiki (5.2%), Sendo (2.6%)]</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Insights người tiêu dùng -->
+        <div class="section">
+            <h2 class="section-title">Insights Người Tiêu Dùng</h2>
+            
+            <div class="insights-container">
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <h3 class="insight-title">Phân khúc khách hàng</h3>
+                    </div>
+                    <div class="insight-body">
+                        <div class="insight-stat">
+                            <div class="stat-value">38.7%</div>
+                            <div class="stat-label">Nhóm tuổi 25-34 chiếm tỷ lệ cao nhất</div>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nhóm tuổi</th>
+                                    <th>Tỷ lệ (%)</th>
+                                    <th>Chi tiêu TB/tháng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>18-24</td>
+                                    <td>12.3%</td>
+                                    <td>150k - 200k</td>
+                                </tr>
+                                <tr>
+                                    <td>25-34</td>
+                                    <td>38.7%</td>
+                                    <td>250k - 350k</td>
+                                </tr>
+                                <tr>
+                                    <td>35-44</td>
+                                    <td>32.4%</td>
+                                    <td>400k - 600k</td>
+                                </tr>
+                                <tr>
+                                    <td>45-54</td>
+                                    <td>12.8%</td>
+                                    <td>300k - 500k</td>
+                                </tr>
+                                <tr>
+                                    <td>55+</td>
+                                    <td>3.8%</td>
+                                    <td>200k - 300k</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <h3 class="insight-title">Động lực mua hàng chính</h3>
+                    </div>
+                    <div class="insight-body">
+                        <div class="insight-stat">
+                            <div class="stat-value">72.3%</div>
+                            <div class="stat-label">Mua vì lo ngại ảnh hưởng của nấm mốc đến sức khỏe</div>
+                        </div>
+                        <div class="chart-placeholder">[Biểu đồ cột: Sức khỏe (72.3%), Tiện lợi (65.7%), Thân thiện môi trường (47.8%), Đa năng (58.2%)]</div>
+                    </div>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <h3 class="insight-title">Hành vi mua sắm theo mùa</h3>
+                    </div>
+                    <div class="insight-body">
+                        <div class="insight-stat">
+                            <div class="stat-value">210-350%</div>
+                            <div class="stat-label">Tăng trưởng doanh số vào mùa nồm ẩm</div>
+                        </div>
+                        <div class="chart-placeholder">[Biểu đồ đường: Biểu diễn doanh số theo tháng, với đỉnh cao ở tháng 2-4 (miền Bắc) và tháng 9-12 (miền Trung)]</div>
+                    </div>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <h3 class="insight-title">Quy trình quyết định mua hàng</h3>
+                    </div>
+                    <div class="insight-body">
+                        <table class="data-table">
+                            <tbody>
+                                <tr>
+                                    <td>Tìm kiếm thông tin</td>
+                                    <td><strong>82.3%</strong> đọc đánh giá người dùng</td>
+                                </tr>
+                                <tr>
+                                    <td>Đánh giá lựa chọn</td>
+                                    <td><strong>78.4%</strong> so sánh ít nhất 3 sản phẩm</td>
+                                </tr>
+                                <tr>
+                                    <td>Quyết định mua</td>
+                                    <td><strong>43.7%</strong> ảnh hưởng bởi khuyến mãi</td>
+                                </tr>
+                                <tr>
+                                    <td>Hành vi sau mua</td>
+                                    <td><strong>34.2%</strong> viết đánh giá sản phẩm</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- So sánh thương hiệu -->
+        <div class="section">
+            <h2 class="section-title">Phân Tích Cạnh Tranh Và Thương Hiệu</h2>
+            
+            <div class="chart-row">
+                <div class="chart-box">
+                    <h3 class="chart-title">Thị phần sản phẩm khử mùi</h3>
+                    <div class="chart-placeholder">[Biểu đồ tròn: Glade (27.3%), Fuwa3e (18.7%), Parcent (14.2%), Ambi Pur (12.8%), Farcent (8.4%), Khác (18.6%)]</div>
+                </div>
+                
+                <div class="chart-box">
+                    <h3 class="chart-title">Thị phần sản phẩm tẩy mốc</h3>
+                    <div class="chart-placeholder">[Biểu đồ tròn: HT01 (21.4%), Javel (19.8%), AXO (16.2%), My Bleach (12.7%), Cocorex (11.5%), Khác (18.4%)]</div>
+                </div>
+                
+                <div class="chart-box">
+                    <h3 class="chart-title">Thị phần máy hút ẩm</h3>
+                    <div class="chart-placeholder">[Biểu đồ tròn: Kosmen (18.3%), FujiE (16.8%), Sharp (14.7%), Edison (12.9%), Xiaomi (11.2%), Electrolux (8.7%), Khác (17.4%)]</div>
+                </div>
+                
+                <div class="chart-box">
+                    <h3 class="chart-title">Hiệu quả marketing trên các sàn TMĐT</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Kênh marketing</th>
+                                <th>Shopee</th>
+                                <th>TikTok Shop</th>
+                                <th>Lazada</th>
+                                <th>Tiki</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Quảng cáo trên sàn</td>
+                                <td>324%</td>
+                                <td>387%</td>
+                                <td>245%</td>
+                                <td>278%</td>
+                            </tr>
+                            <tr>
+                                <td>Influencer</td>
+                                <td>412%</td>
+                                <td>573%</td>
+                                <td>318%</td>
+                                <td>267%</td>
+                            </tr>
+                            <tr>
+                                <td>Voucher</td>
+                                <td>253%</td>
+                                <td>215%</td>
+                                <td>274%</td>
+                                <td>305%</td>
+                            </tr>
+                            <tr>
+                                <td>Flash Sale</td>
+                                <td>378%</td>
+                                <td>342%</td>
+                                <td>321%</td>
+                                <td>287%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Xu hướng và dự báo -->
+        <div class="section">
+            <h2 class="section-title">Xu Hướng Và Dự Báo</h2>
+            
+            <div class="insights-container">
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <h3 class="insight-title">Xu hướng sản phẩm hiện tại</h3>
+                    </div>
+                    <div class="insight-body">
+                        <div class="insight-stat">
+                            <div class="stat-value">23.7%</div>
+                            <div class="stat-label">Tăng trưởng sản phẩm thân thiện môi trường (CAGR 2023-2025)</div>
+                        </div>
+                        <ul>
+                            <li><strong>Sản phẩm thân thiện môi trường:</strong> Chiếm 18.3% thị phần năm 2024, dự kiến đạt 28.5% vào 2027</li>
+                            <li><strong>Tích hợp công nghệ:</strong> Máy hút ẩm thông minh kết nối IoT tăng trưởng 42.3% (2024)</li>
+                            <li><strong>Sản phẩm đa năng:</strong> Xịt khử mùi kết hợp diệt khuẩn tăng 28.5% (2024)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <h3 class="insight-title">Dự báo thị trường 2025-2030</h3>
+                    </div>
+                    <div class="insight-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Năm</th>
+                                    <th>Quy mô (tỷ VNĐ)</th>
+                                    <th>Tăng trưởng (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2025</td>
+                                    <td>487.3</td>
+                                    <td>19.0%</td>
+                                </tr>
+                                <tr>
+                                    <td>2026</td>
+                                    <td>565.3</td>
+                                    <td>16.0%</td>
+                                </tr>
+                                <tr>
+                                    <td>2027</td>
+                                    <td>651.1</td>
+                                    <td>15.2%</td>
+                                </tr>
+                                <tr>
+                                    <td>2028</td>
+                                    <td>748.7</td>
+                                    <td>15.0%</td>
+                                </tr>
+                                <tr>
+                                    <td>2029</td>
+                                    <td>858.5</td>
+                                    <td>14.7%</td>
+                                </tr>
+                                <tr>
+                                    <td>2030</td>
+                                    <td>978.7</td>
+                                    <td>14.0%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <h3 class="insight-title">So sánh với thị trường khu vực</h3>
+                    </div>
+                    <div class="insight-body">
+                        <div class="chart-placeholder">[Biểu đồ cột: CAGR 2025-2030: Việt Nam (15.6%), Thái Lan (12.3%), Indonesia (17.2%), Malaysia (10.8%)]</div>
+                    </div>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-header">
+                        <h3 class="insight-title">Các yếu tố vĩ mô ảnh hưởng</h3>
+                    </div>
+                    <div class="insight-body">
+                        <ul>
+                            <li><strong>Biến đổi khí hậu:</strong> Nhiệt độ trung bình tăng 0.5-1°C vào 2030, tác động +18.3% nhu cầu</li>
+                            <li><strong>Xu hướng nhà ở đô thị:</strong> 68.3% dân số đô thị sống trong căn hộ chung cư vào 2030</li>
+                            <li><strong>Nhận thức người tiêu dùng:</strong> 73.5% quan tâm đến sản phẩm xanh vào 2030</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Khuyến nghị chiến lược -->
+        <div class="recommendation-container">
+            <h2 class="section-title">Khuyến Nghị Chiến Lược</h2>
+            
+            <div class="rec-item">
+                <div class="rec-icon">1</div>
+                <div class="rec-content">
+                    <h4>Phát triển sản phẩm đặc thù theo vùng miền</h4>
+                    <p>Miền Bắc: Tập trung máy hút ẩm công suất lớn, xịt khử mùi phòng kín<br>
+                    Miền Trung: Ưu tiên sản phẩm tẩy mốc tường, quần áo chịu được độ ẩm cao<br>
+                    Miền Nam: Phát triển sản phẩm đa năng kháng khuẩn, khử mùi bền lâu</p>
+                </div>
+            </div>
+            
+            <div class="rec-item">
+                <div class="rec-icon">2</div>
+                <div class="rec-content">
+                    <h4>Tối ưu hóa marketing TMĐT theo sàn</h4>
+                    <p><strong>Shopee:</strong> Live stream demo sản phẩm, combo sản phẩm theo mùa, flash sale định kỳ vào mùa nồm ẩm<br>
+                    <strong>TikTok Shop:</strong> Video ngắn trước-sau, hợp tác micro-KOLs, thử thách khử mốc<br>
+                    <strong>Lazada:</strong> Chương trình tích điểm, bộ sản phẩm combo, voucher độc quyền<br>
+                    
