@@ -3,7 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Báo Cáo Thị Trường Hóa Chất Tẩy Mốc và Khử Mùi Phòng Ốc</title>
+    <title>Dashboard - Thị Trường Hóa Chất Tẩy Mốc và Khử Mùi | Việt Nam 2025</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         :root {
             --primary: #1a73e8;
@@ -18,171 +30,219 @@
             --success-light: #e6f4ea;
             --primary-light: #e8f0fe;
             --danger-light: #fce8e6;
+            --sidebar-width: 260px;
+            --header-height: 64px;
         }
         
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            font-family: 'Roboto', Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9fafb;
             color: var(--dark);
-            background-color: #f0f2f5;
             line-height: 1.6;
+            overflow-x: hidden;
         }
         
-        .report-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-            border-radius: 10px;
-            overflow: hidden;
+        /* Layout */
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
         }
         
-        .report-header {
-            background: linear-gradient(135deg, #1a73e8, #34a853);
-            color: white;
-            padding: 40px;
-            text-align: center;
-            position: relative;
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 10;
+            transition: all 0.3s ease;
         }
         
-        .report-logo {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: all 0.3s ease;
+        }
+        
+        .content-wrapper {
+            padding: 20px;
+            padding-top: calc(var(--header-height) + 20px);
+        }
+        
+        /* Sidebar */
+        .sidebar-header {
+            padding: 20px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: var(--primary);
-        }
-        
-        .report-date {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 14px;
-            opacity: 0.9;
-            background: rgba(255,255,255,0.2);
-            padding: 5px 10px;
-            border-radius: 20px;
-        }
-        
-        .report-title {
-            font-size: 32px;
-            margin: 0;
-            padding-bottom: 10px;
-            font-weight: 500;
-        }
-        
-        .report-subtitle {
-            font-size: 18px;
-            opacity: 0.9;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .section {
-            padding: 30px;
             border-bottom: 1px solid var(--gray-light);
         }
         
-        .section-title {
-            position: relative;
-            font-size: 24px;
-            margin-bottom: 25px;
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
             color: var(--primary);
             display: flex;
             align-items: center;
         }
         
-        .section-title::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: var(--gray-light);
-            margin-left: 15px;
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 12px;
+            font-size: 16px;
         }
         
-        .section-title-icon {
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+        
+        .nav-section {
+            margin-bottom: 15px;
+        }
+        
+        .nav-section-title {
+            padding: 10px 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--gray);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-item {
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            color: var(--dark);
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .nav-item:hover {
             background: var(--primary-light);
+            border-left-color: var(--primary);
+        }
+        
+        .nav-item.active {
+            background: var(--primary-light);
+            border-left-color: var(--primary);
             color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+        
+        /* Header */
+        .header {
+            height: var(--header-height);
+            background: #fff;
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: var(--sidebar-width);
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-sidebar {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--gray);
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-action {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 12px;
-            font-size: 20px;
+            color: var(--gray);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 5px;
         }
         
-        .executive-summary {
-            background-color: var(--primary-light);
-            padding: 30px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .executive-summary h3 {
-            color: var(--primary);
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 20px;
-        }
-        
-        .highlight-box {
-            background: var(--light);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .highlight-title {
-            font-size: 18px;
-            font-weight: 500;
+        .header-action:hover {
+            background: var(--gray-light);
             color: var(--dark);
-            margin-bottom: 15px;
+        }
+        
+        .date-filter {
             display: flex;
             align-items: center;
+            margin-right: 15px;
         }
         
-        .highlight-title i {
-            margin-right: 10px;
-            color: var(--primary);
+        .date-filter select {
+            padding: 8px 12px;
+            border: 1px solid var(--gray-light);
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
         }
         
-        .metrics-row {
-            display: flex;
-            flex-wrap: wrap;
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
         }
         
         .metric-card {
-            flex: 1;
-            min-width: 220px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
             position: relative;
             overflow: hidden;
-            transition: transform 0.3s;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .metric-card:hover {
-            transform: translateY(-5px);
         }
         
         .metric-card::before {
@@ -232,7 +292,6 @@
             display: flex;
             align-items: center;
             font-size: 14px;
-            margin-top: auto;
         }
         
         .trend-up {
@@ -243,16 +302,17 @@
             color: var(--danger);
         }
         
-        .trend-icon {
-            margin-right: 5px;
+        /* Charts */
+        .chart-section {
+            margin-bottom: 30px;
         }
         
         .chart-container {
             background: white;
             border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
             padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
         }
         
         .chart-header {
@@ -263,105 +323,77 @@
         }
         
         .chart-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 500;
             color: var(--dark);
             margin: 0;
         }
         
-        .chart-legend {
+        .chart-actions {
             display: flex;
-            gap: 15px;
+            gap: 10px;
         }
         
-        .legend-item {
-            display: flex;
-            align-items: center;
+        .chart-action {
+            padding: 5px 10px;
+            border: 1px solid var(--gray-light);
+            border-radius: 4px;
             font-size: 12px;
-            color: var(--gray);
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
         }
         
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 3px;
-            margin-right: 5px;
+        .chart-action:hover {
+            background: var(--gray-light);
         }
         
-        .chart-placeholder {
-            height: 350px;
-            background: var(--light);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gray);
-            font-style: italic;
-            position: relative;
+        .chart-action.active {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
         }
         
-        .chart-placeholder.pie {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="%234285f4" stroke-width="20" stroke-dasharray="70 30" stroke-dashoffset="25" /><circle cx="50" cy="50" r="40" fill="none" stroke="%2334a853" stroke-width="20" stroke-dasharray="30 70" stroke-dashoffset="65" /></svg>');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: contain;
+        .chart-canvas {
+            width: 100%;
+            height: 300px;
         }
         
-        .chart-placeholder.bar {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 100 50"><rect x="10" y="10" width="10" height="30" fill="%234285f4" /><rect x="30" y="5" width="10" height="35" fill="%2334a853" /><rect x="50" y="15" width="10" height="25" fill="%23fbbc04" /><rect x="70" y="20" width="10" height="20" fill="%23ea4335" /></svg>');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: contain;
-        }
-        
-        .chart-placeholder.line {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 100 50"><polyline points="10,30 30,20 50,25 70,15 90,10" fill="none" stroke="%234285f4" stroke-width="2" /></svg>');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: contain;
-        }
-        
-        .chart-placeholder.heatmap {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 100 50"><rect x="10" y="5" width="15" height="10" fill="%23c6e48b" /><rect x="30" y="5" width="15" height="10" fill="%237bc96f" /><rect x="50" y="5" width="15" height="10" fill="%23239a3b" /><rect x="70" y="5" width="15" height="10" fill="%23196127" /><rect x="10" y="20" width="15" height="10" fill="%237bc96f" /><rect x="30" y="20" width="15" height="10" fill="%23239a3b" /><rect x="50" y="20" width="15" height="10" fill="%23196127" /><rect x="70" y="20" width="15" height="10" fill="%237bc96f" /><rect x="10" y="35" width="15" height="10" fill="%23196127" /><rect x="30" y="35" width="15" height="10" fill="%237bc96f" /><rect x="50" y="35" width="15" height="10" fill="%23c6e48b" /><rect x="70" y="35" width="15" height="10" fill="%23c6e48b" /></svg>');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: contain;
-        }
-        
-        .chart-label {
-            position: absolute;
-            font-style: normal;
-            font-weight: bold;
-            color: var(--dark);
-        }
-        
-        .grid-container {
+        .chart-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
-            margin-bottom: 30px;
         }
         
-        @media (max-width: 768px) {
-            .grid-container {
+        @media (max-width: 1200px) {
+            .chart-grid {
                 grid-template-columns: 1fr;
             }
+        }
+        
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            overflow-x: auto;
         }
         
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
             font-size: 14px;
         }
         
         .data-table th {
-            background-color: var(--light);
+            padding: 12px 15px;
+            text-align: left;
             font-weight: 500;
             color: var(--gray);
-            text-align: left;
-            padding: 12px 15px;
             border-bottom: 1px solid var(--gray-light);
+            background: var(--light);
         }
         
         .data-table td {
@@ -374,391 +406,436 @@
         }
         
         .data-table .highlight {
-            font-weight: 600;
+            font-weight: 500;
             color: var(--primary);
         }
         
-        .data-table .trend-up {
-            color: var(--secondary);
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                left: 0;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-title {
+                display: none;
+            }
+            
+            body.sidebar-open .sidebar {
+                transform: translateX(0);
+            }
         }
         
-        .data-table .trend-down {
-            color: var(--danger);
-        }
-        
-        .insight-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .insight-header {
-            background: var(--primary-light);
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--gray-light);
-        }
-        
-        .insight-title {
-            margin: 0;
-            font-size: 18px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-        }
-        
-        .insight-title i {
-            margin-right: 10px;
-        }
-        
-        .insight-body {
-            padding: 20px;
-            flex: 1;
-        }
-        
-        .insight-stat {
-            display: flex;
-            align-items: baseline;
-            margin-bottom: 15px;
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-right: 10px;
-        }
-        
-        .stat-label {
-            font-size: 14px;
-            color: var(--gray);
-            flex: 1;
-        }
-        
-        .bullet-list {
-            padding-left: 25px;
-            margin-bottom: 0;
-        }
-        
-        .bullet-list li {
-            margin-bottom: 10px;
-            position: relative;
-        }
-        
-        .bullet-list li:last-child {
-            margin-bottom: 0;
-        }
-        
-        .recommendation-container {
-            background: var(--success-light);
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-        
-        .recommendation-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .recommendation-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--secondary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-size: 20px;
-        }
-        
-        .recommendation-title {
-            font-size: 20px;
-            margin: 0;
-            color: var(--secondary);
-        }
-        
-        .rec-item {
-            display: flex;
-            margin-bottom: 15px;
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        
-        .rec-item:last-child {
-            margin-bottom: 0;
-        }
-        
-        .rec-number {
-            width: 28px;
-            height: 28px;
-            background: var(--secondary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-        
-        .rec-content h4 {
-            margin-top: 0;
-            margin-bottom: 5px;
-            color: var(--dark);
-        }
-        
-        .rec-content p {
-            margin: 0;
-            color: var(--gray);
-            font-size: 14px;
-        }
-        
-        .footer {
-            background: var(--dark);
-            color: white;
-            text-align: center;
-            padding: 20px;
-            font-size: 14px;
-        }
-        
-        .conclusion {
-            background: var(--light);
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 30px;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .conclusion h3 {
-            margin-top: 0;
-            color: var(--primary);
-        }
-        
-        .conclusion p:last-child {
-            margin-bottom: 0;
-        }
-        
-        /* Animation and effects */
+        /* Animation */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .animate-in {
+        .animate-fade-in {
             animation: fadeIn 0.5s ease-out forwards;
         }
         
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-        
-        /* Icon fonts */
-        @font-face {
-            font-family: 'IconFont';
-            src: url('data:application/font-woff;charset=utf-8;base64,...') format('woff');
-            font-weight: normal;
-            font-style: normal;
+        /* Widget Styles */
+        .widget-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
         }
         
-        i {
-            font-family: 'IconFont';
-            font-style: normal;
+        .widget {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+        
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .widget-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--dark);
+            margin: 0;
+        }
+        
+        .widget-more {
+            color: var(--primary);
+            font-size: 14px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="report-container">
-        <!-- Header -->
-        <div class="report-header">
-            <div class="report-logo">VC</div>
-            <div class="report-date">Tháng 4, 2025</div>
-            <h1 class="report-title">Báo Cáo Thị Trường Hóa Chất Tẩy Mốc và Khử Mùi Phòng Ốc</h1>
-            <div class="report-subtitle">Phân tích thị trường thương mại điện tử Việt Nam (2020-2025)</div>
-        </div>
-        
-        <!-- Tóm tắt điều hành -->
-        <div class="section">
-            <h2 class="section-title">
-                <span class="section-title-icon">📊</span>
-                Tóm Tắt Điều Hành
-            </h2>
-            
-            <div class="executive-summary animate-in">
-                <h3>Tổng quan thị trường</h3>
-                <p>Thị trường hóa chất tẩy mốc và khử mùi phòng ốc trên kênh thương mại điện tử tại Việt Nam đang phát triển tích cực với tốc độ tăng trưởng kép hàng năm (CAGR) đạt <strong>16.8%</strong> trong giai đoạn 2020-2025. Quy mô thị trường hiện đạt <strong>174.8 tỷ đồng</strong> (2024) và dự kiến đạt <strong>380.5 tỷ đồng</strong> vào năm 2030.</p>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <span>Dashboard TMĐT</span>
+                </div>
             </div>
-            
-            <div class="highlight-box animate-in delay-1">
-                <h3 class="highlight-title">
-                    <i>⭐</i>
-                    Điểm nổi bật
-                </h3>
-                <ul class="bullet-list">
-                    <li>Phân khúc sản phẩm khử mùi phòng chiếm <strong>55.1%</strong> thị phần, sản phẩm tẩy mốc chiếm <strong>44.9%</strong></li>
-                    <li>Shopee (<strong>58.3%</strong>) và TikTok Shop (<strong>23.7%</strong>) là hai sàn TMĐT dẫn đầu trong phân phối sản phẩm</li>
-                    <li><strong>72.3%</strong> người tiêu dùng mua sản phẩm vì lo ngại ảnh hưởng của nấm mốc đến sức khỏe</li>
-                    <li>Mùa nồm ẩm tại miền Bắc (tháng 2-4) và mùa mưa tại miền Trung (tháng 9-12) là thời điểm tiêu thụ cao nhất</li>
-                    <li>Xu hướng sản phẩm xanh, thân thiện môi trường tăng <strong>23.7%</strong> trong năm 2024</li>
-                </ul>
-            </div>
-            
-            <div class="metrics-row">
-                <div class="metric-card animate-in delay-1">
-                    <div class="metric-icon">📈</div>
-                    <div class="metric-label">Quy mô thị trường</div>
-                    <div class="metric-value">174.8 tỷ</div>
-                    <div class="metric-trend trend-up">
-                        <span class="trend-icon">↑</span> Tăng 16.8% (YoY)
-                    </div>
+            <div class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Tổng quan</div>
+                    <a href="#" class="nav-item active">
+                        <div class="nav-icon"><i class="fas fa-home"></i></div>
+                        <span>Trang chủ</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <div class="nav-icon"><i class="fas fa-chart-line"></i></div>
+                        <span>Phân tích thị trường</span>
+                    </a>
                 </div>
-                
-                <div class="metric-card green animate-in delay-2">
-                    <div class="metric-icon">📊</div>
-                    <div class="metric-label">CAGR 2020-2025</div>
-                    <div class="metric-value">16.8%</div>
-                    <div class="metric-trend">
-                        Cao hơn 3.2% so với ngành hàng tiêu dùng
-                    </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Phân tích</div>
+                    <a href="#" class="nav-item">
+                        <div class="nav-icon"><i class="fas fa-users"></i></div>
+                        <span>Người tiêu dùng</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <div class="nav-icon"><i class="fas fa-store"></i></div>
+                        <span>Kênh bán hàng</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <div class="nav-icon"><i class="fas fa-tags"></i></div>
+                        <span>Sản phẩm & thương hiệu</span>
+                    </a>
                 </div>
-                
-                <div class="metric-card yellow animate-in delay-3">
-                    <div class="metric-icon">👥</div>
-                    <div class="metric-label">Nhóm 25-34 tuổi</div>
-                    <div class="metric-value">38.7%</div>
-                    <div class="metric-trend">
-                        Phân khúc người dùng lớn nhất
-                    </div>
-                </div>
-                
-                <div class="metric-card red animate-in delay-4">
-                    <div class="metric-icon">🛒</div>
-                    <div class="metric-label">Tỷ lệ chuyển đổi TikTok</div>
-                    <div class="metric-value">4.7%</div>
-                    <div class="metric-trend trend-up">
-                        <span class="trend-icon">↑</span> Cao nhất trong các sàn TMĐT
-                    </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Báo cáo</div>
+                    <a href="#" class="nav-item">
+                        <div class="nav-icon"><i class="fas fa-file-alt"></i></div>
+                        <span>Báo cáo tổng hợp</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <div class="nav-icon"><i class="fas fa-download"></i></div>
+                        <span>Xuất báo cáo</span>
+                    </a>
                 </div>
             </div>
         </div>
         
-        <!-- Phân tích thị trường -->
-        <div class="section">
-            <h2 class="section-title">
-                <span class="section-title-icon">📈</span>
-                Phân Tích Thị Trường
-            </h2>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <button class="toggle-sidebar" id="toggleSidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="header-title">Báo Cáo Thị Trường Hóa Chất Tẩy Mốc và Khử Mùi</h1>
+                </div>
+                <div class="header-actions">
+                    <div class="date-filter">
+                        <select id="yearFilter">
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                            <option value="2020">2020</option>
+                        </select>
+                    </div>
+                    <button class="header-action">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="header-action">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="header-action">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                </div>
+            </div>
             
-            <div class="grid-container">
-                <div class="chart-container animate-in">
-                    <div class="chart-header">
-                        <h3 class="chart-title">Cơ cấu thị trường theo sản phẩm (2024)</h3>
-                        <div class="chart-legend">
-                            <div class="legend-item">
-                                <div class="legend-color" style="background-color: #4285f4;"></div>
-                                <span>Khử mùi phòng (55.1%)</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color" style="background-color: #34a853;"></div>
-                                <span>Tẩy mốc (44.9%)</span>
-                            </div>
+            <!-- Content -->
+            <div class="content-wrapper">
+                <!-- Metric Cards -->
+                <div class="dashboard-cards">
+                    <div class="card metric-card animate-fade-in">
+                        <i class="metric-icon fas fa-coins"></i>
+                        <div class="metric-label">Quy mô thị trường</div>
+                        <div class="metric-value">174.8 tỷ</div>
+                        <div class="metric-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Tăng 16.8% so với 2023</span>
                         </div>
                     </div>
-                    <div class="chart-placeholder pie">
-                        <span class="chart-label" style="top: 40%; left: 35%;">55.1%</span>
-                        <span class="chart-label" style="top: 40%; left: 65%;">44.9%</span>
+                    
+                    <div class="card metric-card green animate-fade-in">
+                        <i class="metric-icon fas fa-chart-bar"></i>
+                        <div class="metric-label">CAGR 2020-2025</div>
+                        <div class="metric-value">16.8%</div>
+                        <div class="metric-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+3.2% so với ngành hàng FMCG</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card metric-card yellow animate-fade-in">
+                        <i class="metric-icon fas fa-shopping-cart"></i>
+                        <div class="metric-label">Doanh số TMĐT</div>
+                        <div class="metric-value">101.9 tỷ</div>
+                        <div class="metric-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>58.3% thị phần Shopee</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card metric-card red animate-fade-in">
+                        <i class="metric-icon fas fa-sync-alt"></i>
+                        <div class="metric-label">Tỷ lệ chuyển đổi</div>
+                        <div class="metric-value">4.7%</div>
+                        <div class="metric-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Cao nhất trên TikTok Shop</span>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="chart-container animate-in delay-1">
-                    <div class="chart-header">
-                        <h3 class="chart-title">Dự báo tăng trưởng thị trường (2024-2030)</h3>
+                <!-- Market Overview Charts -->
+                <div class="chart-section">
+                    <div class="chart-grid">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <i class="fas fa-chart-pie mr-2"></i>
+                                    Cơ cấu thị trường theo sản phẩm (2024)
+                                </h3>
+                                <div class="chart-actions">
+                                    <button class="chart-action active">2024</button>
+                                    <button class="chart-action">2023</button>
+                                    <button class="chart-action">2022</button>
+                                </div>
+                            </div>
+                            <canvas id="marketShareChart" class="chart-canvas"></canvas>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <i class="fas fa-chart-line mr-2"></i>
+                                    Dự báo tăng trưởng thị trường (2020-2030)
+                                </h3>
+                                <div class="chart-actions">
+                                    <button class="chart-action active">Tất cả</button>
+                                    <button class="chart-action">Khử mùi</button>
+                                    <button class="chart-action">Tẩy mốc</button>
+                                </div>
+                            </div>
+                            <canvas id="growthChart" class="chart-canvas"></canvas>
+                        </div>
                     </div>
-                    <div class="chart-placeholder line">
-                        <span class="chart-label" style="bottom: 10%; left: 10%;">2024</span>
-                        <span class="chart-label" style="bottom: 10%; left: 90%;">2030</span>
-                        <span class="chart-label" style="top: 10%; left: 90%;">380.5 tỷ</span>
-                        <span class="chart-label" style="top: 70%; left: 10%;">174.8 tỷ</span>
+                    
+                    <div class="chart-grid">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <i class="fas fa-map-marker-alt mr-2"></i>
+                                    Phân bố thị trường theo vùng miền (2024)
+                                </h3>
+                                <div class="chart-actions">
+                                    <button class="chart-action active">Doanh thu</button>
+                                    <button class="chart-action">Tăng trưởng</button>
+                                </div>
+                            </div>
+                            <canvas id="regionChart" class="chart-canvas"></canvas>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <i class="fas fa-store mr-2"></i>
+                                    Thị phần các sàn TMĐT (2024)
+                                </h3>
+                                <div class="chart-actions">
+                                    <button class="chart-action active">Doanh thu</button>
+                                    <button class="chart-action">Đơn hàng</button>
+                                </div>
+                            </div>
+                            <canvas id="ecommerceChart" class="chart-canvas"></canvas>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="chart-container animate-in delay-2">
+                <!-- Seasonal Demand Heatmap -->
+                <div class="chart-container">
                     <div class="chart-header">
-                        <h3 class="chart-title">Phân bố thị trường theo vùng miền (2024)</h3>
+                        <h3 class="chart-title">
+                            <i class="fas fa-calendar-alt mr-2"></i>
+                            Nhu cầu theo vùng miền và mùa vụ (2024)
+                        </h3>
+                        <div class="chart-actions">
+                            <button class="chart-action active">2024</button>
+                            <button class="chart-action">2023</button>
+                        </div>
                     </div>
-                    <div class="chart-placeholder bar">
-                        <span class="chart-label" style="bottom: 5%; left: 15%;">Miền Bắc</span>
-                        <span class="chart-label" style="bottom: 5%; left: 45%;">Miền Trung</span>
-                        <span class="chart-label" style="bottom: 5%; left: 75%;">Miền Nam</span>
-                        <span class="chart-label" style="top: 15%; left: 15%;">46.8%</span>
-                        <span class="chart-label" style="top: 40%; left: 45%;">24.3%</span>
-                        <span class="chart-label" style="top: 30%; left: 75%;">28.9%</span>
+                    <canvas id="heatmapChart" class="chart-canvas" style="height: 200px;"></canvas>
+                </div>
+                
+                <!-- Brand Market Share Table -->
+                <div class="widget-row">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">
+                                <i class="fas fa-spray-can mr-2"></i>
+                                Thị phần thương hiệu sản phẩm khử mùi
+                            </h3>
+                            <span class="widget-more">Xem tất cả</span>
+                        </div>
+                        <div class="table-container" style="padding: 0;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Thương hiệu</th>
+                                        <th>Thị phần</th>
+                                        <th>Tăng trưởng</th>
+                                        <th>Giá TB (VNĐ)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Glade</strong></td>
+                                        <td class="highlight">27.3%</td>
+                                        <td class="trend-up">↑ 3.2%</td>
+                                        <td>168,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Fuwa3e</strong></td>
+                                        <td>18.7%</td>
+                                        <td class="trend-up">↑ 6.8%</td>
+                                        <td>135,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Parcent</strong></td>
+                                        <td>14.2%</td>
+                                        <td class="trend-up">↑ 2.1%</td>
+                                        <td>142,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Ambi Pur</strong></td>
+                                        <td>12.8%</td>
+                                        <td class="trend-down">↓ 1.3%</td>
+                                        <td>175,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Farcent</strong></td>
+                                        <td>8.4%</td>
+                                        <td class="trend-up">↑ 4.7%</td>
+                                        <td>78,000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3 class="widget-title">
+                                <i class="fas fa-broom mr-2"></i>
+                                Thị phần thương hiệu sản phẩm tẩy mốc
+                            </h3>
+                            <span class="widget-more">Xem tất cả</span>
+                        </div>
+                        <div class="table-container" style="padding: 0;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Thương hiệu</th>
+                                        <th>Thị phần</th>
+                                        <th>Tăng trưởng</th>
+                                        <th>Giá TB (VNĐ)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>HT01</strong></td>
+                                        <td class="highlight">21.4%</td>
+                                        <td class="trend-up">↑ 8.7%</td>
+                                        <td>85,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Javel</strong></td>
+                                        <td>19.8%</td>
+                                        <td class="trend-down">↓ 1.2%</td>
+                                        <td>58,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>AXO</strong></td>
+                                        <td>16.2%</td>
+                                        <td class="trend-up">↑ 5.3%</td>
+                                        <td>75,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>My Bleach</strong></td>
+                                        <td>12.7%</td>
+                                        <td class="trend-up">↑ 3.8%</td>
+                                        <td>135,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cocorex</strong></td>
+                                        <td>11.5%</td>
+                                        <td class="trend-up">↑ 4.1%</td>
+                                        <td>92,000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="chart-container animate-in delay-3">
+                <!-- E-commerce Performance -->
+                <div class="chart-container">
                     <div class="chart-header">
-                        <h3 class="chart-title">Nhu cầu theo vùng miền và mùa vụ</h3>
+                        <h3 class="chart-title">
+                            <i class="fas fa-shopping-cart mr-2"></i>
+                            Hiệu quả marketing trên các sàn TMĐT
+                        </h3>
+                        <div class="chart-actions">
+                            <button class="chart-action active">ROI</button>
+                            <button class="chart-action">Tỷ lệ chuyển đổi</button>
+                        </div>
                     </div>
-                    <div class="chart-placeholder heatmap">
-                        <span class="chart-label" style="top: 0%; left: 10%;">Q1</span>
-                        <span class="chart-label" style="top: 0%; left: 35%;">Q2</span>
-                        <span class="chart-label" style="top: 0%; left: 60%;">Q3</span>
-                        <span class="chart-label" style="top: 0%; left: 85%;">Q4</span>
-                        <span class="chart-label" style="top: 20%; left: 0%;">Bắc</span>
-                        <span class="chart-label" style="top: 40%; left: 0%;">Trung</span>
-                        <span class="chart-label" style="top: 60%; left: 0%;">Nam</span>
-                    </div>
+                    <canvas id="marketingChart" class="chart-canvas"></canvas>
                 </div>
             </div>
-            
-            <div class="chart-container animate-in delay-4">
-                <div class="chart-header">
-                    <h3 class="chart-title">Thị phần các sàn TMĐT (2024)</h3>
-                </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Sàn TMĐT</th>
-                            <th>Doanh thu (tỷ VNĐ)</th>
-                            <th>Thị phần (%)</th>
-                            <th>Tăng trưởng YoY (%)</th>
-                            <th>Tỷ lệ chuyển đổi (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Shopee</strong></td>
-                            <td class="highlight">101.9</td>
-                            <td class="highlight">58.3%</td>
-                            <td class="trend-up">↑ 21.3%</td>
-                            <td>3.2%</td>
-                        </tr>
-                        <tr>
-                            <td><strong>TikTok Shop</strong></td>
-                            <td>41.4</td>
-                            <td>23.7%</td>
-                            <td class="trend-up">↑ 43.7%</td>
-                            <td class="highlight">4.7%</td>
-                        </tr>
-                        <tr>
-                            <td>Lazada</td>
-                            <td>18.2</td>
-                            <td>10.4%</td>
-                            <td class="trend-down">↓ 2.8%</td>
-                            <td>2.8%</td>
-                        </tr>
-                        <tr>
-                            <td>Tiki</td>
-                            <td>9.1</td>
-                            <td>5
+        </div>
+    </div>
+    
+    <script>
+        // Toggle Sidebar
+        document.getElementById('toggleSidebar').addEventListener('click', function() {
+            document.body.classList.toggle('sidebar-open');
+        });
+        
+        // Chart.js Implementation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Market Share Pie Chart
+            const marketShareCtx = document.getElementById('marketShareChart').getContext('2d');
+            const marketShareChart = new Chart(marketShareCtx, {
+                type: 'pie',
+                data: {
+                    labels: 
