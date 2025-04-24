@@ -1,1407 +1,580 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Báo Cáo Thị Trường Hóa Chất Tẩy Mốc & Khử Mùi 2024-2025</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .sidebar {
-            transition: all 0.3s;
-        }
-        .dashboard-content {
-            transition: all 0.3s;
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .progress-bar {
-            transition: width 1s ease-in-out;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .floating-btn {
-            animation: float 3s ease-in-out infinite;
-        }
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Dashboard Thị Trường Hóa Chất Tẩy Mốc &amp; Khử Mùi Phòng Ốc | TMĐT Việt Nam 2020-2025</title>
+  <meta name="viewport" content="width=1024, initial-scale=1, maximum-scale=1, user-scalable=1">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+  <style>
+    html { scroll-behavior: smooth; background: #f4f7fa;}
+    body {
+      font-family: 'Roboto', 'Open Sans', Arial, Helvetica, sans-serif;
+      background: #f4f7fa;
+      color: #1a202c;
+      line-height: 1.6;
+    }
+    .section { margin-bottom: 3rem; }
+    .card {
+      @apply bg-white rounded-xl shadow-lg p-6 mb-6;
+      transition: box-shadow 0.3s;
+    }
+    .card:hover {
+      box-shadow: 0 8px 40px rgba(44,62,80,.15);
+      transition: box-shadow 0.2s;
+    }
+    h1, h2, h3, h4 {
+      font-family: 'Roboto', Arial, sans-serif;
+      font-weight: 700;
+    }
+    .statup { animation: upanim 1s cubic-bezier(.23,1.04,.68,.99);}
+    @keyframes upanim {
+      0% {transform: translateY(32px); opacity: 0.5;}
+      100% {transform: translateY(0); opacity: 1;}
+    }
+    .divider { height: 2px; background: linear-gradient(90deg,#2b6cb0,#90cdf4 90%,transparent); border-radius: 4px;}
+
+    /* Custom scrollbar for horizontal chart scrolling */
+    .scroll-x::-webkit-scrollbar {
+      height: 8px;
+      background: #e4e9f0;
+    }
+    .scroll-x::-webkit-scrollbar-thumb {
+      background: #adcff3;
+      border-radius: 8px;
+    }
+    .scroll-x { overflow-x: auto; }
+    /* For PDF, always show all contents in one page */
+     {
+      .card { page-break-inside: avoid; box-shadow: none !important; }
+      body { background:white;}
+    }
+  </style>
 </head>
-<body class="bg-gray-100 font-sans">
-    <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar -->
-        <div class="sidebar bg-blue-800 text-white w-64 flex-shrink-0">
-            <div class="p-4 flex items-center justify-between border-b border-blue-700">
-                <div class="flex items-center">
-                    <i class="fas fa-spray-can text-2xl mr-3 text-blue-300"></i>
-                    <span class="text-xl font-bold">ChemMarket Insights</span>
-                </div>
-                <button id="sidebarToggle" class="text-blue-300 hover:text-white">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-            <div class="p-4">
-                <div class="mb-6">
-                    <h3 class="text-xs uppercase text-blue-400 font-semibold mb-3">Báo cáo chính</h3>
-                    <ul>
-                        <li class="mb-2">
-                            <a href="#" class="tab-link flex items-center p-2 rounded hover:bg-blue-700 active" data-tab="overview">
-                                <i class="fas fa-chart-pie mr-3 text-blue-300"></i>
-                                <span>Tổng quan</span>
-                            </a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="#" class="tab-link flex items-center p-2 rounded hover:bg-blue-700" data-tab="market">
-                                <i class="fas fa-store mr-3 text-blue-300"></i>
-                                <span>Thị trường</span>
-                            </a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="#" class="tab-link flex items-center p-2 rounded hover:bg-blue-700" data-tab="consumer">
-                                <i class="fas fa-users mr-3 text-blue-300"></i>
-                                <span>Người tiêu dùng</span>
-                            </a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="#" class="tab-link flex items-center p-2 rounded hover:bg-blue-700" data-tab="brands">
-                                <i class="fas fa-tags mr-3 text-blue-300"></i>
-                                <span>Thương hiệu</span>
-                            </a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="#" class="tab-link flex items-center p-2 rounded hover:bg-blue-700" data-tab="trends">
-                                <i class="fas fa-chart-line mr-3 text-blue-300"></i>
-                                <span>Xu hướng</span>
-                            </a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="#" class="tab-link flex items-center p-2 rounded hover:bg-blue-700" data-tab="ecommerce">
-                                <i class="fas fa-shopping-cart mr-3 text-blue-300"></i>
-                                <span>TMĐT</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-xs uppercase text-blue-400 font-semibold mb-3">Phân tích</h3>
-                    <ul>
-                        <li class="mb-2">
-                            <a href="#" class="tab-link flex items-center p-2 rounded hover:bg-blue-700" data-tab="forecast">
-                                <i class="fas fa-chart-bar mr-3 text-blue-300"></i>
-                                <span>Dự báo</span>
-                            </a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="#" class="tab-link flex items-center p-2 rounded hover:bg-blue-700" data-tab="recommendations">
-                                <i class="fas fa-lightbulb mr-3 text-blue-300"></i>
-                                <span>Khuyến nghị</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="absolute bottom-0 w-full p-4 border-t border-blue-700">
-                <div class="text-center text-blue-300 text-sm">
-                    <p>Báo cáo cập nhật: Tháng 4/2025</p>
-                </div>
-            </div>
+<body class="px-2 md:px-10 py-8">
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <header class="mb-8 statup">
+      <h1 class="text-3xl md:text-4xl font-bold mb-2 text-blue-800 flex items-center gap-3">
+        <i class="fas fa-chart-bar text-blue-400"></i>
+        BÁO CÁO THỊ TRƯỜNG HÓA CHẤT TẨY MỐC &amp; KHỬ MÙI PHÒNG ỐC
+      </h1>
+      <h2 class="text-xl md:text-2xl text-blue-600 font-semibold">Thương mại điện tử Việt Nam (2020-2025)</h2>
+      <div class="divider mt-4 mb-4"></div>
+      <p class="max-w-4xl text-gray-700">
+        Dashboard trực quan, hiện đại về thị trường hóa chất tẩy mốc và khử mùi phòng ốc trên các kênh thương mại điện tử Việt Nam, cung cấp số liệu về tăng trưởng, xu hướng, phân tích người tiêu dùng và dự báo giai đoạn 2020-2025.
+      </p>
+    </header>
+
+    <!-- Tóm tắt điều hành -->
+    <section class="card statup">
+      <h3 class="text-2xl text-blue-700 mb-3 flex items-center"><i class="fas fa-lightbulb text-yellow-400 mr-2"></i>TÓM TẮT ĐIỀU HÀNH</h3>
+      <ul class="list-disc pl-6 leading-relaxed text-gray-700">
+        <li>Tốc độ tăng trưởng trung bình (CAGR) của thị trường đạt <span class="font-bold text-blue-600">16.8%</span> (2020-2025).</li>
+        <li>Quy mô thị trường <b>174.8 tỷ đồng (2024)</b>, dự kiến đạt <b>380.5 tỷ đồng (2030)</b>.</li>
+        <li><b>Khử mùi chiếm 55.1%</b>, <b>tẩy mốc chiếm 44.9%</b>.</li>
+        <li><b>Shopee (58.3%)</b> và <b>TikTok Shop (23.7%)</b> dẫn đầu kênh phân phối.</li>
+        <li>Phần lớn người dùng chọn sản phẩm vì <span class="text-blue-700">lo ngại sức khỏe</span> trước nấm mốc.</li>
+        <li>Mùa tiêu thụ cao: <b>tháng 2-4 (miền Bắc), 9-12 (miền Trung)</b>.</li>
+        <li>Xu hướng <b>sản phẩm xanh tăng 23.7%</b> trong năm 2024.</li>
+      </ul>
+    </section>
+
+    <!-- Biểu đồ 1: Quy mô và tăng trưởng thị trường 2020-2030 -->
+    <section class="card section statup">
+      <h3 class="text-xl text-blue-700 mb-2 flex items-center"><i class="fas fa-chart-line text-purple-500 mr-2"></i>Quy mô &amp; Tăng trưởng Thị trường (2020-2030)</h3>
+      <div id="marketSizeChart" style="width:100%;height:350px;max-width:820px;margin:auto;"></div>
+    </section>
+
+    <!-- Biểu đồ 2: Thị phần phân khúc sản phẩm -->
+    <section class="card section statup">
+      <h3 class="text-xl text-blue-700 mb-2 flex items-center"><i class="fas fa-chart-pie text-teal-500 mr-2"></i>Phân khúc Sản phẩm (2024)</h3>
+      <div class="flex flex-col md:flex-row gap-4">
+        <div id="productSegmentPie" style="flex:2;min-width:240px;height:242px;"></div>
+        <div id="productBreakdownBar" style="flex:2;min-width:230px;height:242px;"></div>
+      </div>
+    </section>
+
+    <!-- Biểu đồ 3: Phân bố nhu cầu theo vùng miền -->
+    <section class="card section statup">
+      <h3 class="text-xl text-blue-700 mb-2 flex items-center"><i class="fas fa-map-marked-alt text-green-500 mr-2"></i>Phân bố nhu cầu theo vùng miền (2024)</h3>
+      <div id="regionChart" style="width:100%;max-width:700px;height:270px;margin:auto;"></div>
+    </section>
+
+    <!-- Biểu đồ 4: Thị phần các sàn TMĐT -->
+    <section class="card section statup">
+      <h3 class="text-xl text-blue-700 mb-2 flex items-center"><i class="fab fa-shopify text-pink-500 mr-2"></i>Thị phần Doanh thu các sàn TMĐT (2024)</h3>
+      <div id="ecomShareBar" style="width:100%;max-width:660px;height:250px;margin:auto"></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div id="ecomCvrBar" style="width:100%;height:180px;"></div>
+        <div id="ecomCpcBar" style="width:100%;height:180px;"></div>
+      </div>
+    </section>
+
+    <!-- Biểu đồ 5: Cơ cấu nhân khẩu học -->
+    <section class="card section statup">
+      <h3 class="text-xl text-blue-700 mb-2 flex items-center"><i class="fas fa-user-friends text-indigo-400 mr-2"></i>Phân khúc khách hàng (Năm 2024)</h3>
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1">
+          <div id="ageSegmentBar" style="height:200px;"></div>
         </div>
-
-        <!-- Main Content -->
-        <div class="dashboard-content flex-1 overflow-auto">
-            <!-- Header -->
-            <header class="bg-white shadow-sm">
-                <div class="flex items-center justify-between p-4">
-                    <h1 class="text-2xl font-bold text-gray-800">BÁO CÁO THỊ TRƯỜNG HÓA CHẤT TẦY MỐC VÀ KHỬ MÙI PHÒNG ỐC</h1>
-                    <div class="flex items-center">
-                        <div class="relative mr-4">
-                            <input type="text" placeholder="Tìm kiếm..." class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                        </div>
-                        <div class="flex items-center">
-                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="w-10 h-10 rounded-full mr-2">
-                            <span class="font-medium">Admin</span>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Overview Tab Content -->
-            <div id="overview" class="tab-content active p-6">
-                <div class="mb-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">THƯƠNG MẠI ĐIỆN TỬ VIỆT NAM (2020-2025)</h2>
-                    <div class="bg-white rounded-lg shadow p-6 mb-6">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">TÓM TẮT ĐIỀU HÀNH</h3>
-                        <p class="mb-4 text-gray-700">Thị trường hóa chất tẩy mốc và khử mùi phòng ốc trên kênh thương mại điện tử tại Việt Nam đang phát triển tích cực với tốc độ tăng trưởng kép hàng năm (CAGR) đạt <span class="font-bold text-blue-600">16.8%</span> trong giai đoạn 2020-2025. Quy mô thị trường hiện đạt <span class="font-bold text-blue-600">174.8 tỷ đồng (2024)</span> và dự kiến đạt <span class="font-bold text-blue-600">380.5 tỷ đồng</span> vào năm 2030.</p>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                                <h4 class="font-semibold text-blue-800 mb-2">Điểm nổi bật:</h4>
-                                <ul class="list-disc pl-5 text-gray-700">
-                                    <li class="mb-1">Phân khúc sản phẩm khử mùi phòng chiếm <span class="font-bold">55.1%</span> thị phần</li>
-                                    <li class="mb-1">Shopee (<span class="font-bold">58.3%</span>) và TikTok Shop (<span class="font-bold">23.7%</span>) là hai sàn TMĐT dẫn đầu</li>
-                                    <li class="mb-1"><span class="font-bold">72.3%</span> người tiêu dùng mua sản phẩm vì lo ngại ảnh hưởng của nấm mốc đến sức khỏe</li>
-                                    <li class="mb-1">Mùa nồm ẩm tại miền Bắc (tháng 2-4) và mùa mưa tại miền Trung (tháng 9-12) là thời điểm tiêu thụ cao nhất</li>
-                                    <li>Xu hướng sản phẩm xanh, thân thiện môi trường tăng <span class="font-bold">23.7%</span> trong năm 2024</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <canvas id="marketSizeChart" height="200"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <!-- Market Share Card -->
-                    <div class="bg-white rounded-lg shadow p-6 card-hover transition-all duration-300">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-semibold text-gray-700">Phân bố thị phần</h3>
-                            <div class="bg-blue-100 p-2 rounded-full">
-                                <i class="fas fa-chart-pie text-blue-600"></i>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <canvas id="marketShareChart" height="150"></canvas>
-                        </div>
-                        <div class="text-sm text-gray-600">
-                            <div class="flex items-center justify-between mb-1">
-                                <span>Khử mùi phòng: <span class="font-bold">55.1%</span></span>
-                                <span class="text-blue-600">96.3 tỷ</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span>Tẩy mốc: <span class="font-bold">44.9%</span></span>
-                                <span class="text-green-600">78.5 tỷ</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- E-commerce Platform Card -->
-                    <div class="bg-white rounded-lg shadow p-6 card-hover transition-all duration-300">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-semibold text-gray-700">Thị phần sàn TMĐT</h3>
-                            <div class="bg-purple-100 p-2 rounded-full">
-                                <i class="fas fa-shopping-bag text-purple-600"></i>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <canvas id="platformShareChart" height="150"></canvas>
-                        </div>
-                        <div class="text-sm text-gray-600">
-                            <div class="flex items-center justify-between mb-1">
-                                <span>Shopee: <span class="font-bold">58.3%</span></span>
-                                <span class="text-orange-500">101.9 tỷ</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span>TikTok Shop: <span class="font-bold">23.7%</span></span>
-                                <span class="text-blue-500">41.4 tỷ</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Growth Rate Card -->
-                    <div class="bg-white rounded-lg shadow p-6 card-hover transition-all duration-300">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-semibold text-gray-700">Tăng trưởng theo vùng</h3>
-                            <div class="bg-green-100 p-2 rounded-full">
-                                <i class="fas fa-map-marked-alt text-green-600"></i>
-                            </div>
-                        </div>
-                        <div class="space-y-3">
-                            <div>
-                                <div class="flex justify-between text-sm mb-1">
-                                    <span class="font-medium">Miền Bắc</span>
-                                    <span>20.3%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-blue-600 h-2 rounded-full progress-bar" style="width: 80%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm mb-1">
-                                    <span class="font-medium">Miền Trung</span>
-                                    <span>15.7%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-green-600 h-2 rounded-full progress-bar" style="width: 60%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm mb-1">
-                                    <span class="font-medium">Miền Nam</span>
-                                    <span>13.4%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-purple-600 h-2 rounded-full progress-bar" style="width: 50%"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-4 text-sm text-gray-600">
-                            <p>Miền Bắc chiếm <span class="font-bold">46.8%</span> thị phần, cao điểm tháng 2-4 (mùa nồm ẩm)</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Consumer Insights Card -->
-                    <div class="bg-white rounded-lg shadow p-6 card-hover transition-all duration-300">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-semibold text-gray-700">Insights người tiêu dùng</h3>
-                            <div class="bg-yellow-100 p-2 rounded-full">
-                                <i class="fas fa-user-tag text-yellow-600"></i>
-                            </div>
-                        </div>
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between text-sm mb-1">
-                                    <span class="font-medium">Lo ngại sức khỏe</span>
-                                    <span>72.3%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-red-500 h-2 rounded-full progress-bar" style="width: 72%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm mb-1">
-                                    <span class="font-medium">Tiện lợi</span>
-                                    <span>65.7%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-blue-500 h-2 rounded-full progress-bar" style="width: 65%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm mb-1">
-                                    <span class="font-medium">Quan tâm môi trường</span>
-                                    <span>47.8%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-green-500 h-2 rounded-full progress-bar" style="width: 47%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-sm mb-1">
-                                    <span class="font-medium">Sản phẩm đa năng</span>
-                                    <span>58.2%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="bg-purple-500 h-2 rounded-full progress-bar" style="width: 58%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Top Brands Card -->
-                    <div class="bg-white rounded-lg shadow p-6 card-hover transition-all duration-300">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-semibold text-gray-700">Thương hiệu hàng đầu</h3>
-                            <div class="bg-red-100 p-2 rounded-full">
-                                <i class="fas fa-crown text-red-600"></i>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <h4 class="text-sm font-medium text-gray-700 mb-2">Khử mùi phòng</h4>
-                                <ul class="space-y-2">
-                                    <li class="flex items-center">
-                                        <span class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs mr-2">1</span>
-                                        <span>Glade (27.3%)</span>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <span class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs mr-2">2</span>
-                                        <span>Fuwa3e (18.7%)</span>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <span class="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center text-white text-xs mr-2">3</span>
-                                        <span>Parcent (14.2%)</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-medium text-gray-700 mb-2">Tẩy mốc</h4>
-                                <ul class="space-y-2">
-                                    <li class="flex items-center">
-                                        <span class="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white text-xs mr-2">1</span>
-                                        <span>HT01 (21.4%)</span>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <span class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs mr-2">2</span>
-                                        <span>Javel (19.8%)</span>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <span class="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center text-white text-xs mr-2">3</span>
-                                        <span>AXO (16.2%)</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="mt-4 text-sm text-gray-600">
-                            <p>Sản phẩm xanh tăng <span class="font-bold">23.7%</span> trong năm 2024</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Market Tab Content -->
-            <div id="market" class="tab-content p-6">
-                <div class="bg-white rounded-lg shadow p-6 mb-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">I. TỔNG QUAN THỊ TRƯỜNG</h2>
-                    
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">1. Quy mô và phân khúc thị trường</h3>
-                        <p class="mb-4 text-gray-700">Thị trường hóa chất tẩy mốc và khử mùi phòng ốc trên kênh TMĐT tại Việt Nam ước đạt <span class="font-bold text-blue-600">174.8 tỷ đồng</span> trong năm 2024, tăng <span class="font-bold text-blue-600">16.8%</span> so với năm 2023.</p>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                                <h4 class="font-semibold text-blue-800 mb-2">a. Sản phẩm khử mùi phòng (96.3 tỷ đồng - 55.1%)</h4>
-                                <ul class="list-disc pl-5 text-gray-700">
-                                    <li class="mb-1"><span class="font-bold">Xịt khử mùi phòng:</span> 56.2% phân khúc</li>
-                                    <li class="mb-1"><span class="font-bold">Gel khử mùi:</span> 31.5% phân khúc</li>
-                                    <li><span class="font-bold">Tinh dầu khử mùi:</span> 12.3% phân khúc</li>
-                                </ul>
-                            </div>
-                            <div class="bg-green-50 rounded-lg p-4 border border-green-100">
-                                <h4 class="font-semibold text-green-800 mb-2">b. Sản phẩm tẩy mốc (78.5 tỷ đồng - 44.9%)</h4>
-                                <ul class="list-disc pl-5 text-gray-700">
-                                    <li class="mb-1"><span class="font-bold">Tẩy mốc tường:</span> 42.3% phân khúc</li>
-                                    <li class="mb-1"><span class="font-bold">Tẩy mốc quần áo:</span> 39.8% phân khúc</li>
-                                    <li><span class="font-bold">Tẩy mốc đa năng:</span> 17.9% phân khúc</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">2. Phân bố nhu cầu theo vùng miền</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                            <div class="bg-white border border-blue-200 rounded-lg p-4 shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">a. Miền Bắc (46.8% thị phần)</h4>
-                                <ul class="text-gray-700">
-                                    <li class="mb-1"><span class="font-bold">Cao điểm:</span> Tháng 2-4 (mùa nồm ẩm)</li>
-                                    <li class="mb-1"><span class="font-bold">Sản phẩm ưa chuộng:</span> Xịt khử mùi phòng kín, tẩy mốc tường</li>
-                                    <li><span class="font-bold">Tăng trưởng:</span> 20.3% YoY</li>
-                                </ul>
-                            </div>
-                            <div class="bg-white border border-green-200 rounded-lg p-4 shadow-sm">
-                                <h4 class="font-semibold text-green-800 mb-2">b. Miền Trung (24.3% thị phần)</h4>
-                                <ul class="text-gray-700">
-                                    <li class="mb-1"><span class="font-bold">Cao điểm:</span> Tháng 9-12 (mùa mưa)</li>
-                                    <li class="mb-1"><span class="font-bold">Sản phẩm ưa chuộng:</span> Tẩy mốc tường, tẩy mốc quần áo</li>
-                                    <li><span class="font-bold">Tăng trưởng:</span> 15.7% YoY</li>
-                                </ul>
-                            </div>
-                            <div class="bg-white border border-purple-200 rounded-lg p-4 shadow-sm">
-                                <h4 class="font-semibold text-purple-800 mb-2">c. Miền Nam (28.9% thị phần)</h4>
-                                <ul class="text-gray-700">
-                                    <li class="mb-1"><span class="font-bold">Cao điểm:</span> Quanh năm (khí hậu nóng ẩm)</li>
-                                    <li class="mb-1"><span class="font-bold">Sản phẩm ưa chuộng:</span> Gel khử mùi, tẩy mốc đa năng</li>
-                                    <li><span class="font-bold">Tăng trưởng:</span> 13.4% YoY</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">3. Xu hướng giá bán trung bình</h3>
-                        <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
-                            <canvas id="priceTrendChart" height="200"></canvas>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                                <h4 class="font-semibold text-blue-800 mb-2">a. Khử mùi phòng</h4>
-                                <ul class="list-disc pl-5 text-gray-700">
-                                    <li class="mb-1"><span class="font-bold">Xịt khử mùi:</span> 45.000 - 120.000đ/chai 500ml</li>
-                                    <li class="mb-1"><span class="font-bold">Gel khử mùi:</span> 35.000 - 95.000đ/hộp 300g</li>
-                                    <li><span class="font-bold">Tinh dầu:</span> 25.000 - 80.000đ/chai 100ml</li>
-                                </ul>
-                            </div>
-                            <div class="bg-green-50 rounded-lg p-4 border border-green-100">
-                                <h4 class="font-semibold text-green-800 mb-2">b. Tẩy mốc</h4>
-                                <ul class="list-disc pl-5 text-gray-700">
-                                    <li class="mb-1"><span class="font-bold">Tẩy mốc tường:</span> 55.000 - 150.000đ/chai 500ml</li>
-                                    <li class="mb-1"><span class="font-bold">Tẩy mốc quần áo:</span> 45.000 - 120.000đ/chai 1L</li>
-                                    <li><span class="font-bold">Tẩy đa năng:</span> 65.000 - 180.000đ/chai 750ml</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Consumer Tab Content -->
-            <div id="consumer" class="tab-content p-6">
-                <div class="bg-white rounded-lg shadow p-6 mb-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">II. PHÂN TÍCH NGƯỜI TIÊU DÙNG</h2>
-                    
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">1. Nhân khẩu học người mua</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">a. Phân bố độ tuổi</h4>
-                                <canvas id="ageChart" height="200"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">b. Phân bố giới tính</h4>
-                                <canvas id="genderChart" height="200"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">c. Thu nhập hàng tháng</h4>
-                                <canvas id="incomeChart" height="200"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">2. Hành vi mua sắm</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">a. Tần suất mua</h4>
-                                <canvas id="purchaseFrequencyChart" height="200"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">b. Số lượng mỗi lần</h4>
-                                <canvas id="purchaseQuantityChart" height="200"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">3. Yếu tố ảnh hưởng quyết định mua</h3>
-                        <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
-                            <canvas id="decisionFactorsChart" height="200"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Brands Tab Content -->
-            <div id="brands" class="tab-content p-6">
-                <div class="bg-white rounded-lg shadow p-6 mb-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">III. PHÂN TÍCH THƯƠNG HIỆU</h2>
-                    
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">1. Thị phần thương hiệu</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">a. Khử mùi phòng</h4>
-                                <canvas id="deodorantBrandChart" height="250"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">b. Tẩy mốc</h4>
-                                <canvas id="moldRemoverBrandChart" height="250"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">2. Chiến lược giá của các thương hiệu</h3>
-                        
-                        <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
-                            <canvas id="brandPriceStrategyChart" height="200"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">3. Đánh giá của người dùng</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">a. Điểm đánh giá trung bình</h4>
-                                <canvas id="brandRatingChart" height="200"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">b. Tỷ lệ phản hồi tích cực</h4>
-                                <canvas id="positiveFeedbackChart" height="200"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">c. Tốc độ tăng trưởng đánh giá</h4>
-                                <canvas id="ratingGrowthChart" height="200"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Trends Tab Content -->
-            <div id="trends" class="tab-content p-6">
-                <div class="bg-white rounded-lg shadow p-6 mb-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">IV. XU HƯỚNG THỊ TRƯỜNG</h2>
-                    
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">1. Xu hướng tìm kiếm</h3>
-                        
-                        <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
-                            <canvas id="searchTrendChart" height="200"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">2. Xu hướng sản phẩm</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">a. Sản phẩm xanh</h4>
-                                <canvas id="greenProductTrendChart" height="200"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">b. Sản phẩm đa năng</h4>
-                                <canvas id="multiPurposeTrendChart" height="200"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">3. Xu hướng bao bì</h3>
-                        
-                        <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
-                            <canvas id="packagingTrendChart" height="200"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- E-commerce Tab Content -->
-            <div id="ecommerce" class="tab-content p-6">
-                <div class="bg-white rounded-lg shadow p-6 mb-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">V. PHÂN TÍCH KÊNH TMĐT</h2>
-                    
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">1. Thị phần sàn TMĐT</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <canvas id="ecommerceMarketShareChart" height="250"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">Tăng trưởng theo sàn</h4>
-                                <canvas id="ecommerceGrowthChart" height="200"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">2. Hiệu quả bán hàng theo sàn</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">a. Tỷ lệ chuyển đổi</h4>
-                                <canvas id="conversionRateChart" height="200"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">b. Giá trị đơn hàng TB</h4>
-                                <canvas id="averageOrderValueChart" height="200"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">c. Tỷ lệ hoàn trả</h4>
-                                <canvas id="returnRateChart" height="200"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">3. Xu hướng quảng cáo</h3>
-                        
-                        <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
-                            <canvas id="adTrendChart" height="200"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Forecast Tab Content -->
-            <div id="forecast" class="tab-content p-6">
-                <div class="bg-white rounded-lg shadow p-6 mb-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">VI. DỰ BÁO THỊ TRƯỜNG</h2>
-                    
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">1. Dự báo quy mô thị trường</h3>
-                        
-                        <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
-                            <canvas id="marketForecastChart" height="200"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">2. Dự báo phân khúc</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">a. Khử mùi phòng</h4>
-                                <canvas id="deodorantForecastChart" height="200"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">b. Tẩy mốc</h4>
-                                <canvas id="moldRemoverForecastChart" height="200"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">3. Dự báo khu vực</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">a. Miền Bắc</h4>
-                                <canvas id="northForecastChart" height="200"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">b. Miền Trung</h4>
-                                <canvas id="centralForecastChart" height="200"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h4 class="font-semibold text-blue-800 mb-2">c. Miền Nam</h4>
-                                <canvas id="southForecastChart" height="200"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recommendations Tab Content -->
-            <div id="recommendations" class="tab-content p-6">
-                <div class="bg-white rounded-lg shadow p-6 mb-6">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">VII. KHUYẾN NGHỊ CHIẾN LƯỢC</h2>
-                    
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">1. Khuyến nghị cho nhà sản xuất</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                            <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                                <div class="flex items-center mb-3">
-                                    <div class="bg-blue-600 text-white p-2 rounded-full mr-3">
-                                        <i class="fas fa-leaf"></i>
-                                    </div>
-                                    <h4 class="font-semibold text-blue-800">Sản phẩm xanh</h4>
-                                </div>
-                                <ul class="list-disc pl-5 text-gray-700">
-                                    <li class="mb-1">Phát triển dòng sản phẩm thân thiện môi trường</li>
-                                    <li class="mb-1">Chứng nhận hữu cơ, không độc hại</li>
-                                    <li>Đóng gói bằng vật liệu tái chế</li>
-                                </ul>
-                            </div>
-                            <div class="bg-green-50 rounded-lg p-4 border border-green-100">
-                                <div class="flex items-center mb-3">
-                                    <div class="bg-green-600 text-white p-2 rounded-full mr-3">
-                                        <i class="fas fa-bolt"></i>
-                                    </div>
-                                    <h4 class="font-semibold text-green-800">Đa năng hóa</h4>
-                                </div>
-                                <ul class="list-disc pl-5 text-gray-700">
-                                    <li class="mb-1">Kết hợp nhiều công dụng trong 1 sản phẩm</li>
-                                    <li class="mb-1">Vừa khử mùi vừa diệt khuẩn</li>
-                                    <li>Bổ sung tinh dầu thiên nhiên</li>
-                                </ul>
-                            </div>
-                            <div class="bg-purple-50 rounded-lg p-4 border border-purple-100">
-                                <div class="flex items-center mb-3">
-                                    <div class="bg-purple-600 text-white p-2 rounded-full mr-3">
-                                        <i class="fas fa-box-open"></i>
-                                    </div>
-                                    <h4 class="font-semibold text-purple-800">Đa dạng bao bì</h4>
-                                </div>
-                                <ul class="list-disc pl-5 text-gray-700">
-                                    <li class="mb-1">Thiết kế nhỏ gọn, dễ sử dụng</li>
-                                    <li class="mb-1">Bình xịt, gel, túi treo</li>
-                                    <li>Bộ sưu tập theo mùa</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">2. Khuyến nghị cho nhà bán lẻ</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                            <div class="bg-yellow-50 rounded-lg p-4 border border-yellow-100">
-                                <div class="flex items-center mb-3">
-                                    <div class="bg-yellow-600 text-white p-2 rounded-full mr-3">
-                                        <i class="fas fa-tags"></i>
-                                    </div>
-                                    <h4 class="font-semibold text-yellow-800">Chiến lược giá</h4>
-                                </div>
-                                <ul class="list-disc pl-5 text-gray-700">
-                                    <li class="mb-1">Combo sản phẩm với giá ưu đãi</li>
-                                    <li class="mb-1">Giảm giá mùa nồm ẩm/mưa</li>
-                                    <li>Chương trình tích điểm đổi quà</li>
-                                </ul>
-                            </div>
-                            <div class="bg-red-50 rounded-lg p-4 border border-red-100">
-                                <div class="flex items-center mb-3">
-                                    <div class="bg-red-600 text-white p-2 rounded-full mr-3">
-                                        <i class="fas fa-ad"></i>
-                                    </div>
-                                    <h4 class="font-semibold text-red-800">Quảng cáo hiệu quả</h4>
-                                </div>
-                                <ul class="list-disc pl-5 text-gray-700">
-                                    <li class="mb-1">Tập trung vào TikTok Shop, Shopee</li>
-                                    <li class="mb-1">Video demo sản phẩm thực tế</li>
-                                    <li>Livestream hướng dẫn sử dụng</li>
-                                </ul>
-                            </div>
-                            <div class="bg-indigo-50 rounded-lg p-4 border border-indigo-100">
-                                <div class="flex items-center mb-3">
-                                    <div class="bg-indigo-600 text-white p-2 rounded-full mr-3">
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <h4 class="font-semibold text-indigo-800">Xây dựng đánh giá</h4>
-                                </div>
-                                <ul class="list-disc pl-5 text-gray-700">
-                                    <li class="mb-1">Khuyến khích khách để lại review</li>
-                                    <li class="mb-1">Phản hồi nhanh các bình luận</li>
-                                    <li>Chương trình "Khách hàng thân thiết"</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h3 class="text-lg font-semibold text-blue-700 mb-4">3. Lộ trình triển khai</h3>
-                        
-                        <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
-                            <canvas id="implementationRoadmapChart" height="200"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="flex-1">
+          <div id="incomeSegmentPie" style="height:200px;"></div>
         </div>
-    </div>
+      </div>
+      <div class="mt-4 text-sm text-gray-600">
+        <ul class="list-square pl-5">
+          <li>
+            <b>18.3%</b> người dùng thu nhập cao &gt;15 triệu, ưa chuộng sản phẩm cao cấp - thân thiện môi trường
+          </li>
+          <li>
+            <b>72.3%</b> mua vì lo ngại nấm mốc ảnh hưởng sức khỏe
+          </li>
+          <li>
+            <b>58.2%</b> thích sản phẩm đa chức năng (khử mùi &amp; diệt khuẩn)
+          </li>
+        </ul>
+      </div>
+    </section>
 
-    <!-- Floating Action Button -->
-    <div class="fixed bottom-6 right-6">
-        <button class="floating-btn bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300">
-            <i class="fas fa-download text-xl"></i>
-        </button>
-    </div>
+    <!-- Table: Hiệu quả các sàn TMĐT -->
+    <section class="card section statup">
+      <h3 class="text-xl text-blue-700 mb-2 flex items-center"><i class="fas fa-table text-orange-400 mr-2"></i>So sánh Hiệu quả các sàn TMĐT 2024</h3>
+      <div class="overflow-x-auto scroll-x">
+        <table class="min-w-full bg-white rounded-lg shadow-md text-sm table-fixed">
+          <thead>
+            <tr class="bg-blue-50 text-gray-900">
+              <th class="px-2 py-2 font-semibold">Sàn TMĐT</th>
+              <th class="px-2 py-2 font-semibold">Doanh thu (tỷ VNĐ)</th>
+              <th class="px-2 py-2 font-semibold">Tỷ lệ chuyển đổi</th>
+              <th class="px-2 py-2 font-semibold">Chi phí CPC (VNĐ)</th>
+              <th class="px-2 py-2 font-semibold">Chi phí CAC (VNĐ)</th>
+              <th class="px-2 py-2 font-semibold">Đơn hàng TB (VNĐ)</th>
+              <th class="px-2 py-2 font-semibold">Tỷ lệ hoàn đơn</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="hover:bg-blue-50">
+              <td class="px-2 py-2 font-bold text-blue-700">Shopee</td>
+              <td class="px-2 py-2">101.9</td>
+              <td class="px-2 py-2">3.2%</td>
+              <td class="px-2 py-2">2,800</td>
+              <td class="px-2 py-2">42,000</td>
+              <td class="px-2 py-2">243,000</td>
+              <td class="px-2 py-2">5.2%</td>
+            </tr>
+            <tr class="hover:bg-blue-50">
+              <td class="px-2 py-2 font-bold text-blue-700">TikTok Shop</td>
+              <td class="px-2 py-2">41.4</td>
+              <td class="px-2 py-2">4.7%</td>
+              <td class="px-2 py-2">3,700</td>
+              <td class="px-2 py-2">38,000</td>
+              <td class="px-2 py-2">178,000</td>
+              <td class="px-2 py-2">6.8%</td>
+            </tr>
+            <tr class="hover:bg-blue-50">
+              <td class="px-2 py-2 font-bold text-blue-700">Lazada</td>
+              <td class="px-2 py-2">18.2</td>
+              <td class="px-2 py-2">2.8%</td>
+              <td class="px-2 py-2">2,200</td>
+              <td class="px-2 py-2">47,000</td>
+              <td class="px-2 py-2">315,000</td>
+              <td class="px-2 py-2">4.7%</td>
+            </tr>
+            <tr class="hover:bg-blue-50">
+              <td class="px-2 py-2 font-bold text-blue-700">Tiki</td>
+              <td class="px-2 py-2">9.1</td>
+              <td class="px-2 py-2">3.1%</td>
+              <td class="px-2 py-2">2,500</td>
+              <td class="px-2 py-2">52,000</td>
+              <td class="px-2 py-2">387,000</td>
+              <td class="px-2 py-2">3.2%</td>
+            </tr>
+            <tr class="hover:bg-blue-50">
+              <td class="px-2 py-2 font-bold text-blue-700">Sendo</td>
+              <td class="px-2 py-2">4.2</td>
+              <td class="px-2 py-2">2.4%</td>
+              <td class="px-2 py-2">1,800</td>
+              <td class="px-2 py-2">35,000</td>
+              <td class="px-2 py-2">196,000</td>
+              <td class="px-2 py-2">5.8%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-    <script>
-        // Tab switching functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const tabLinks = document.querySelectorAll('.tab-link');
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            tabLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Remove active class from all tabs and contents
-                    tabLinks.forEach(l => l.classList.remove('active'));
-                    tabContents.forEach(c => c.classList.remove('active'));
-                    
-                    // Add active class to clicked tab and corresponding content
-                    this.classList.add('active');
-                    const tabId = this.getAttribute('data-tab');
-                    document.getElementById(tabId).classList.add('active');
-                });
-            });
-            
-            // Sidebar toggle functionality
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const sidebar = document.querySelector('.sidebar');
-            const dashboardContent = document.querySelector('.dashboard-content');
-            
-            sidebarToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('hidden');
-                dashboardContent.classList.toggle('ml-0');
-                dashboardContent.classList.toggle('ml-64');
-            });
-            
-            // Initialize all charts
-            initCharts();
-        });
-        
-        function initCharts() {
-            // Market Size Chart
-            const marketSizeCtx = document.getElementById('marketSizeChart').getContext('2d');
-            new Chart(marketSizeCtx, {
-                type: 'line',
-                data: {
-                    labels: ['2020', '2021', '2022', '2023', '2024', '2025F'],
-                    datasets: [{
-                        label: 'Quy mô thị trường (tỷ đồng)',
-                        data: [80.5, 95.2, 112.8, 136.4, 174.8, 210.5],
-                        borderColor: 'rgb(59, 130, 246)',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + context.raw + ' tỷ';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + ' tỷ';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Market Share Chart
-            const marketShareCtx = document.getElementById('marketShareChart').getContext('2d');
-            new Chart(marketShareCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Khử mùi phòng', 'Tẩy mốc'],
-                    datasets: [{
-                        data: [55.1, 44.9],
-                        backgroundColor: [
-                            'rgba(59, 130, 246, 0.8)',
-                            'rgba(16, 185, 129, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(59, 130, 246, 1)',
-                            'rgba(16, 185, 129, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.label + ': ' + context.raw + '%';
-                                }
-                            }
-                        }
-                    },
-                    cutout: '70%'
-                }
-            });
-            
-            // Platform Share Chart
-            const platformShareCtx = document.getElementById('platformShareChart').getContext('2d');
-            new Chart(platformShareCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Shopee', 'TikTok Shop', 'Lazada', 'Tiki', 'Khác'],
-                    datasets: [{
-                        label: 'Thị phần (%)',
-                        data: [58.3, 23.7, 9.5, 5.2, 3.3],
-                        backgroundColor: [
-                            'rgba(249, 115, 22, 0.7)',
-                            'rgba(59, 130, 246, 0.7)',
-                            'rgba(220, 38, 38, 0.7)',
-                            'rgba(5, 150, 105, 0.7)',
-                            'rgba(156, 163, 175, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(249, 115, 22, 1)',
-                            'rgba(59, 130, 246, 1)',
-                            'rgba(220, 38, 38, 1)',
-                            'rgba(5, 150, 105, 1)',
-                            'rgba(156, 163, 175, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false,
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.raw + '%';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Price Trend Chart
-            const priceTrendCtx = document.getElementById('priceTrendChart').getContext('2d');
-            new Chart(priceTrendCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Q1/2023', 'Q2/2023', 'Q3/2023', 'Q4/2023', 'Q1/2024', 'Q2/2024'],
-                    datasets: [
-                        {
-                            label: 'Khử mùi phòng (nghìn đồng)',
-                            data: [85, 82, 80, 88, 92, 95],
-                            borderColor: 'rgb(59, 130, 246)',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.3
-                        },
-                        {
-                            label: 'Tẩy mốc (nghìn đồng)',
-                            data: [105, 102, 98, 110, 115, 120],
-                            borderColor: 'rgb(16, 185, 129)',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.3
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + context.raw + 'k';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + 'k';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Age Distribution Chart
-            const ageChartCtx = document.getElementById('ageChart').getContext('2d');
-            new Chart(ageChartCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['18-24', '25-34', '35-44', '45-54', '55+'],
-                    datasets: [{
-                        label: 'Phân bố độ tuổi (%)',
-                        data: [12.5, 38.7, 32.4, 12.1, 4.3],
-                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                        borderColor: 'rgba(59, 130, 246, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false,
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.raw + '%';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Gender Distribution Chart
-            const genderChartCtx = document.getElementById('genderChart').getContext('2d');
-            new Chart(genderChartCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Nữ', 'Nam'],
-                    datasets: [{
-                        data: [68.3, 31.7],
-                        backgroundColor: [
-                            'rgba(244, 114, 182, 0.7)',
-                            'rgba(59, 130, 246, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(244, 114, 182, 1)',
-                            'rgba(59, 130, 246, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.label + ': ' + context.raw + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Income Distribution Chart
-            const incomeChartCtx = document.getElementById('incomeChart').getContext('2d');
-            new Chart(incomeChartCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['< 10 triệu', '10-15 triệu', '15-20 triệu', '20-30 triệu', '> 30 triệu'],
-                    datasets: [{
-                        data: [18.2, 32.5, 28.7, 15.3, 5.3],
-                        backgroundColor: [
-                            'rgba(156, 163, 175, 0.7)',
-                            'rgba(59, 130, 246, 0.7)',
-                            'rgba(16, 185, 129, 0.7)',
-                            'rgba(249, 115, 22, 0.7)',
-                            'rgba(220, 38, 38, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(156, 163, 175, 1)',
-                            'rgba(59, 130, 246, 1)',
-                            'rgba(16, 185, 129, 1)',
-                            'rgba(249, 115, 22, 1)',
-                            'rgba(220, 38, 38, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.label + ': ' + context.raw + '%';
-                                }
-                            }
-                        }
-                    },
-                    cutout: '60%'
-                }
-            });
-            
-            // Purchase Frequency Chart
-            const purchaseFrequencyCtx = document.getElementById('purchaseFrequencyChart').getContext('2d');
-            new Chart(purchaseFrequencyCtx, {
-                type: 'radar',
-                data: {
-                    labels: ['1 lần/năm', '2-3 lần/năm', '4-6 lần/năm', '7-12 lần/năm', '>12 lần/năm'],
-                    datasets: [{
-                        label: 'Tần suất mua',
-                        data: [12.3, 28.5, 35.7, 18.2, 5.3],
-                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                        borderColor: 'rgba(59, 130, 246, 1)',
-                        pointBackgroundColor: 'rgba(59, 130, 246, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(59, 130, 246, 1)',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.raw + '%';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        r: {
-                            angleLines: {
-                                display: true
-                            },
-                            suggestedMin: 0,
-                            suggestedMax: 40,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Purchase Quantity Chart
-            const purchaseQuantityCtx = document.getElementById('purchaseQuantityChart').getContext('2d');
-            new Chart(purchaseQuantityCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['1 sản phẩm', '2-3 sản phẩm', '4-5 sản phẩm', '>5 sản phẩm'],
-                    datasets: [{
-                        label: 'Số lượng mỗi lần (%)',
-                        data: [25.7, 48.3, 18.5, 7.5],
-                        backgroundColor: 'rgba(16, 185, 129, 0.7)',
-                        borderColor: 'rgba(16, 185, 129, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false,
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.raw + '%';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Decision Factors Chart
-            const decisionFactorsCtx = document.getElementById('decisionFactorsChart').getContext('2d');
-            new Chart(decisionFactorsCtx, {
-                type: 'horizontalBar',
-                data: {
-                    labels: ['Giá cả', 'Thương hiệu', 'Đánh giá', 'Khuyến mãi', 'Thành phần', 'Bao bì'],
-                    datasets: [{
-                        label: 'Yếu tố ảnh hưởng (%)',
-                        data: [72.5, 58.3, 82.7, 65.2, 47.8, 32.1],
-                        backgroundColor: 'rgba(249, 115, 22, 0.7)',
-                        borderColor: 'rgba(249, 115, 22, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false,
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.raw + '%';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Deodorant Brand Chart
-            const deodorantBrandCtx = document.getElementById('deodorantBrandChart').getContext('2d');
-            new Chart(deodorantBrandCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Glade', 'Fuwa3e', 'Parcent', 'Ambi Pur', 'Air Wick', 'Khác'],
-                    datasets: [{
-                        label: 'Thị phần (%)',
-                        data: [27.3, 18.7, 14.2, 12.5, 9.8, 17.5],
-                        backgroundColor: [
-                            'rgba(59, 130, 246, 0.7)',
-                            'rgba(16, 185, 129, 0.7)',
-                            'rgba(249, 115, 22, 0.7)',
-                            'rgba(168, 85, 247, 0.7)',
-                            'rgba(220, 38, 38, 0.7)',
-                            'rgba(156, 163, 175, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(59, 130, 246, 1)',
-                            'rgba(16, 185, 129, 1)',
-                            'rgba(249, 115, 22, 1)',
-                            'rgba(168, 85, 247, 1)',
-                            'rgba(220, 38, 38, 1)',
-                            'rgba(156, 163, 175, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false,
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.raw + '%';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Mold Remover Brand Chart
-            const moldRemoverBrandCtx = document.getElementById('moldRemoverBrandChart').getContext('2d');
-            new Chart(moldRemoverBrandCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['HT01', 'Javel', 'AXO', 'Vim', 'Sunlight', 'Khác'],
-                    datasets: [{
-                        label: 'Thị phần (%)',
-                        data: [21.4, 19.8, 16.2, 14.7, 10.5, 17.4],
-                        backgroundColor: [
-                            'rgba(16, 185, 129, 0.7)',
-                            'rgba(59, 130, 246, 0.7)',
-                            'rgba(249, 115, 22, 0.7)',
-                            'rgba(168, 85, 247, 0.7)',
-                            'rgba(220, 38, 38, 0.7)',
-                            'rgba(156, 163, 175, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(16, 185, 129, 1)',
-                            'rgba(59, 130, 246, 1)',
-                            'rgba(249, 115, 22, 1)',
-                            'rgba(168, 85, 247, 1)',
-                            'rgba(220, 38, 38, 1)',
-                            'rgba(156, 163, 175, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false,
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.raw + '%';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Brand Price Strategy Chart
-            const brandPriceStrategyCtx = document.getElementById('brandPriceStrategyChart').getContext('2d');
-            new Chart(brandPriceStrategyCtx, {
-                type: 'scatter',
-                data: {
-                    datasets: [
-                        {
-                            label: 'Glade',
-                            data: [{x: 85, y: 27.3}],
-                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                            borderColor: 'rgba(59, 130, 246, 1)',
-                            borderWidth: 1,
-                            pointRadius: 10
-                        },
-                        {
-                            label: 'Fuwa3e',
-                            data: [{x: 65, y: 18.7}],
-                            backgroundColor: 'rgba(16, 185, 129, 0.7)',
-                            borderColor: 'rgba(16, 185, 129, 1)',
-                            borderWidth: 1,
-                            pointRadius: 10
-                        },
-                        {
-                            label: 'Parcent',
-                            data: [{x: 75, y: 14.2}],
-                            backgroundColor: 'rgba(249, 115, 22, 0.7)',
-                            borderColor: 'rgba(249, 115, 22, 1)',
-                           
+    <!-- Biểu đồ 6: Thị phần thương hiệu -->
+    <section class="card section statup">
+      <h3 class="text-xl text-blue-700 mb-2 flex items-center"><i class="fas fa-warehouse text-green-400 mr-2"></i>Thị phần các thương hiệu hàng đầu (2024)</h3>
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1">
+          <div id="brandAirFreshPie" style="height:212px;"></div>
+          <div class="mt-2 text-center text-sm text-gray-600">Sản phẩm khử mùi phòng</div>
+        </div>
+        <div class="flex-1">
+          <div id="brandAntiMouldPie" style="height:212px;"></div>
+          <div class="mt-2 text-center text-sm text-gray-600">Sản phẩm tẩy mốc</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bảng: Các sản phẩm nổi bật -->
+    <section class="card section statup">
+      <h3 class="text-xl text-blue-700 mb-2 flex items-center"><i class="fas fa-star text-yellow-400 mr-2"></i>Sản phẩm &amp; Chiến lược marketing nổi bật</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <table class="min-w-full bg-white rounded shadow-md text-sm mb-4">
+            <thead>
+              <tr class="bg-blue-50 text-gray-900">
+                <th class="px-2 py-2 font-semibold">Sản phẩm</th>
+                <th class="px-2 py-2 font-semibold">Giá</th>
+                <th class="px-2 py-2 font-semibold">Mô tả nổi bật</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="hover:bg-blue-50">
+                <td class="px-2 py-2">Fuwa3e – Xịt phòng</td>
+                <td class="px-2 py-2">135.000đ</td>
+                <td class="px-2 py-2">Chống ẩm mốc, an toàn</td>
+              </tr>
+              <tr class="hover:bg-blue-50">
+                <td class="px-2 py-2">Glade – Hoa oải hương</td>
+                <td class="px-2 py-2">168.000đ</td>
+                <td class="px-2 py-2">Dung tích lớn, mùi dễ chịu</td>
+              </tr>
+              <tr class="hover:bg-blue-50">
+                <td class="px-2 py-2">Farcent – Gel trà xanh</td>
+                <td class="px-2 py-2">78.000đ</td>
+                <td class="px-2 py-2">Bền mùi 30 ngày</td>
+              </tr>
+              <tr class="hover:bg-blue-50">
+                <td class="px-2 py-2">HT01 – Tẩy mốc tường</td>
+                <td class="px-2 py-2">85.000đ</td>
+                <td class="px-2 py-2">Hiệu quả, chuyên dụng</td>
+              </tr>
+              <tr class="hover:bg-blue-50">
+                <td class="px-2 py-2">AXO – Tẩy mốc áo</td>
+                <td class="px-2 py-2">75.000đ</td>
+                <td class="px-2 py-2">An toàn vải màu</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+        <div class="rounded-xl overflow-hidden shadow-sm bg-blue-50 px-4 py-3 text-sm animate-pulse">
+          <div class="mb-2 font-bold text-blue-700"><i class="fas fa-bullhorn mr-2"></i>Case study tiêu biểu:</div>
+          <b>HT01: "Tường sạch mốc - Nhà sạch khuẩn"</b><br>
+          <span class="text-gray-600">- Shopee & Lazada, video demo hiệu quả.<br>
+          - Hợp tác 50+ micro-KOLs.<br>
+          - Tăng trưởng doanh số: <b class="text-green-600">+186%</b> Q3/2024. ROI 315%.</span>
+          <div class="h-3"></div>
+          <b>Fuwa3e: "Không gian sống sạch - Không lo nấm mốc"</b><br>
+          <span class="text-gray-600">- TikTok Shop: thử thách KOC, video ngắn so sánh.<br>
+          - 37.500 đơn, chuyển đổi 5.3%.</span>
+        </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Biểu đồ 7: Xu hướng & Dự báo -->
+    <section class="card section statup">
+      <h3 class="text-xl text-blue-700 mb-4 flex items-center"><i class="fas fa-search-dollar text-lime-500 mr-2"></i>Xu hướng sản phẩm &amp; Dự báo phát triển đến 2030</h3>
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1">
+          <div id="trendStack" style="height:220px;"></div>
+        </div>
+        <div class="flex-1 rounded-lg bg-blue-50 p-4 shadow-sm text-gray-700 text-sm">
+          <ul class="list-disc pl-5">
+            <li><b>Sản phẩm xanh</b>: tăng trưởng CAGR 23.7% (2023-2025), chiếm 18.3% thị phần 2024, dự báo đạt 28.5% 2027.</li>
+            <li><b>Đa năng</b>: xịt khử mùi + diệt khuẩn tăng 28.5%, tẩy mốc + khử mùi tăng 32.3% (2024).</li>
+            <li><b>Cao cấp</b>: tăng trưởng 17.8%, mùi tự nhiên, bao bì tái chế.</li>
+            <li><b>Yếu tố thúc đẩy</b>: Đô thị hóa, sức khỏe, khí hậu - độ ẩm, tỷ lệ chung cư.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recommendations -->
+    <section class="card section statup">
+      <h3 class="text-xl text-blue-700 mb-2 flex items-center"><i class="fas fa-rocket text-pink-500 mr-2"></i>Khuyến nghị chiến lược cho doanh nghiệp</h3>
+      <ul class="list-disc pl-6 text-gray-700 pb-2">
+        <li>Phát triển sản phẩm phù hợp với vùng miền, xu hướng xanh và đa năng.</li>
+        <li>Tối ưu marketing TMĐT: livestream, video demo, influencer, cá nhân hóa theo thời tiết.</li>
+        <li>Kết hợp phân phối online-offline, đồng bộ sản phẩm & giá.</li>
+        <li>Đẩy mạnh truyền thông tác hại nấm mốc, lợi ích sản phẩm thân thiện môi trường.</li>
+      </ul>
+      <div class="mt-2 text-gray-500 text-xs">Nguồn dữ liệu: Phân tích tổng hợp, khảo sát người tiêu dùng & báo cáo ngành hàng tháng 4/2025.</div>
+    </section>
+  </div>
+  <script>
+    // Biểu đồ: Quy mô thị trường 2020-2030
+    var sizeChart = echarts.init(document.getElementById('marketSizeChart'));
+    sizeChart.setOption({
+      animationDuration: 2000,
+      grid: { left: 50, right: 18, top: 45, bottom: 40 },
+      tooltip: { trigger: 'axis' },
+      xAxis: {
+        type: 'category',
+        data: ['2020', '2021', '2022', '2023', '2024', '2025','2026','2027','2028','2029','2030'],
+        axisLine: { lineStyle: { color: '#4299e1' } }
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Tỷ VNĐ',
+        nameTextStyle:{fontWeight:700},
+        axisLabel: { formatter: '{value}' }
+      },
+      series: [{
+        name:'Quy mô thị trường',
+        type:'line',
+        smooth:true,
+        symbolSize: 8,
+        lineStyle:{width:4,color:'#3182ce'},
+        itemStyle:{color:'#2b6cb0'},
+        areaStyle: {color:'rgba(66,153,225,.16)'},
+        data:[99,115,134,150,174.8,204.1,235.7,270.1,306.3,343.1,380.5]
+      }]
+    });
+
+    // Biểu đồ Pie: phân khúc sản phẩm năm 2024
+    var prodSegPie = echarts.init(document.getElementById('productSegmentPie'));
+    prodSegPie.setOption({
+      animationDuration: 1200,
+      title: { left:'center',top:-5,text:'', textStyle:{fontWeight:500} },
+      tooltip: { trigger:'item' },
+      legend: { orient:'vertical', left:'right', top:'middle', data: ['Khử mùi','Tẩy mốc'] },
+      series: [{
+        type:'pie',
+        radius:['40%','65%'],
+        center:['50%','55%'],
+        roseType: 'radius',
+        data:[
+          {value:55.1, name:'Khử mùi',itemStyle:{color:'#4299e1'}},
+          {value:44.9, name:'Tẩy mốc',itemStyle:{color:'#2b6cb0'}}
+        ],
+        label: {formatter:'{b}: {d}%', fontWeight:600},
+        emphasis: { itemStyle: {shadowBlur:8,shadowOffsetX:0,shadowColor:'rgba(66,153,225,0.2)'} }
+      }]
+    });
+
+    // Biểu đồ Bar: phân sản phẩm chi tiết
+    var prodBrkBar = echarts.init(document.getElementById('productBreakdownBar'));
+    prodBrkBar.setOption({
+      grid: { left: 40, right: 16, top: 15, bottom: 28 },
+      tooltip: { trigger:'axis' },
+      xAxis: { type:'category', data:['Xịt','Gel','Tinh dầu','Tẩy tường','Tẩy áo','Đa năng'], axisTick:{alignWithLabel:true}, axisLabel:{interval:0,rotate:15} },
+      yAxis: { type: 'value', axisLabel:{formatter:'{value}%'}},
+      series: [{
+        type:'bar',
+        barMaxWidth: 34,
+        itemStyle:{
+          color: function(param){
+            var c=['#4299e1','#90cdf4','#bee3f8','#3182ce','#2c5282','#b9f5ff'];
+            return c[param.dataIndex];
+          }
+        },
+        data:[31,17,7,19,18,8]
+      }]
+    });
+
+    // Phân bố nhu cầu theo vùng miền
+    var regionBar = echarts.init(document.getElementById('regionChart'));
+    regionBar.setOption({
+      tooltip: { trigger:'axis' },
+      legend: { top:3, data:['Tăng trưởng (%)'] },
+      grid: { left: 38, right: 25, top: 32, bottom: 30 },
+      xAxis: [ {type:'category', data:['Miền Bắc','Miền Trung','Miền Nam'], axisLabel:{fontWeight:500} }],
+      yAxis: [
+        { type:'value', name:'Thị phần (%)', position:'left', min:0, max:50 },
+        { type:'value', name:'Tăng trưởng (%)', position:'right', min:0, max:25 }
+      ],
+      series:[
+        {
+          name:'Thị phần (%)',
+          type:'bar',
+          barGap:'-100%',barWidth:42,
+          itemStyle:{color:'#2b6cb0', borderRadius:8},
+          data:[46.8,24.3,28.9]
+        },
+        {
+          name:'Tăng trưởng (%)',
+          type:'line',
+          yAxisIndex:1,
+          symbol:'circle',
+          symbolSize:9,
+          lineStyle:{color:'#48bb78',width:4},
+          itemStyle:{color:'#48bb78'},
+          data:[20.3,15.7,13.4]
+        }
+      ]
+    });
+
+    // Thị phần các sàn TMĐT
+    var ecomShare = echarts.init(document.getElementById('ecomShareBar'));
+    ecomShare.setOption({
+      grid:{ left:50, right:0, top:31, bottom:20 },
+      tooltip:{ trigger:'axis' },
+      xAxis:{
+        type:'category',
+        data:['Shopee','TikTok Shop','Lazada','Tiki','Sendo'],
+        axisLabel:{fontWeight:600}
+      },
+      yAxis:{ type:'value', name:'Tỷ VNĐ' },
+      series:[
+        {
+          type:'bar',
+          itemStyle:{
+            color: function(param){
+              var c=['#2b6cb0','#df307e','#23bdee','#38a169','#d69e2e'];
+              return c[param.dataIndex];
+            }
+          },
+          data:[101.9,41.4,18.2,9.1,4.2],
+          barMaxWidth:36
+        }
+      ]
+    });
+
+    // Tỷ lệ chuyển đổi & CPC các sàn TMĐT
+    var ecomCvr = echarts.init(document.getElementById('ecomCvrBar'));
+    ecomCvr.setOption({
+      grid:{ left:42, right:6, top:28, bottom:18 },
+      tooltip:{ trigger:'axis' },
+      xAxis:{
+        type:'category',
+        data:['TT Shop','Shopee','Tiki','Lazada','Sendo'],
+        axisLabel:{fontWeight:500}
+      },
+      yAxis:{ type:'value', name:'% chuyển đổi', min:2, max:5 },
+      series:[
+        {
+          type:'line',
+          symbol:'circle',
+          symbolSize:9,
+          lineStyle:{width:4,color:'#ab72d1'},
+          areaStyle:{color:'#e9d8fd'},
+          itemStyle:{color:'#6f40b2'},
+          data:[4.7,3.2,3.1,2.8,2.4]
+        }
+      ]
+    });
+    var ecomCpc = echarts.init(document.getElementById('ecomCpcBar'));
+    ecomCpc.setOption({
+      grid:{ left:42, right:6, top:28, bottom:18 },
+      tooltip:{ trigger:'axis' },
+      xAxis:{
+        type:'category',
+        data:['Shopee','TT Shop','Lazada','Tiki','Sendo'],
+        axisLabel:{fontWeight:500}
+      },
+      yAxis:{ type:'value', name:'CPC (VNĐ)', min:1500, max:4000 },
+      series:[
+        {
+          type:'bar',
+          itemStyle:{color:'#38a169'},
+          data:[2800,3700,2200,2500,1800],
+          barMaxWidth:32
+        }
+      ]
+    });
+
+    // Nhóm nhân khẩu học
+    var ageBar = echarts.init(document.getElementById('ageSegmentBar'));
+    ageBar.setOption({
+      animationDuration: 900,
+      backgroundColor:'transparent',
+      grid:{ left:32, right:18, top:20, bottom:30 },
+      tooltip:{ trigger:'axis' },
+      xAxis:{
+        type:'category',
+        data:['18-24','25-34','35-44','45-54','55+'],
+        axisLabel:{fontWeight:500}
+      },
+      yAxis:{ type:'value', name:'% khách hàng', min:0, max:40 },
+      series:[{
+        type:'bar',
+        itemStyle:{color:'#2b6cb0', borderRadius:6},
+        data:[12.3,38.7,32.4,12.8,3.8],
+        barMaxWidth:28
+      }]
+    });
+    var incomePie = echarts.init(document.getElementById('incomeSegmentPie'));
+    incomePie.setOption({
+      animationDuration: 1000,
+      tooltip:{trigger:'item'},
+      legend:{top:'bottom'},
+      series:[{
+        type:'pie',
+        radius:['35%','65%'],
+        center:['50%','50%'],
+        data:[
+          {value:18.3,name:'Cao (>15tr)',itemStyle:{color:'#38a169'}},
+          {value:46.5,name:'TB (7-15tr)',itemStyle:{color:'#4299e1'}},
+          {value:35.2,name:'Thấp (<7tr)',itemStyle:{color:'#e53e3e'}}
+        ],
+        label:{formatter:'{b}: {d}%',fontWeight:500}
+      }]
+    });
+
+    // Thị phần thương hiệu
+    var brandAirPie = echarts.init(document.getElementById('brandAirFreshPie'));
+    brandAirPie.setOption({
+      animationDuration: 1000,
+      legend: { left:'right', top:'center', orient:'vertical', itemGap:6 },
+      series:[{
+        type:'pie',
+        radius:['40%','63%'],
+        center:['38%','55%'],
+        data:[
+          {value:27.3, name:'Glade'}, {value:18.7, name:'Fuwa3e'}, {value:14.2, name:'Parcent'},
+          {value:12.8, name:'Ambi Pur'},{value:8.4, name:'Farcent'},{value:18.6, name:'Khác'}
+        ],
+        label:{formatter:'{b}\n{d}%',fontWeight:500}
+      }]
+    });
+    var brandMouldPie = echarts.init(document.getElementById('brandAntiMouldPie'));
+    brandMouldPie.setOption({
+      animationDuration: 1000,
+      legend: { left:'right', top:'center', orient:'vertical', itemGap:6 },
+      series:[{
+        type:'pie',
+        radius:['40%','63%'],
+        center:['38%','55%'],
+        data:[
+          {value:21.4,name:'HT01'},{value:19.8,name:'Javel'},{value:16.2,name:'AXO'},
+          {value:12.7,name:'My Bleach'},{value:11.5,name:'Cocorex'},{value:18.4,name:'Khác'}
+        ],
+        label:{formatter:'{b}\n{d}%',fontWeight:500}
+      }]
+    });
+
+    // Xu hướng sản phẩm/tăng trưởng dự báo
+    var trendStack = echarts.init(document.getElementById('trendStack'));
+    trendStack.setOption({
+      grid:{ left:50, right:15, top:30, bottom:32 },
+      tooltip:{ trigger:'axis' },
+      legend:{top:2, data:['Xanh','Đa năng','Cao cấp']},
+      xAxis:{ type:'category', data:['2023','2024','2025','2026','2027']},
+      yAxis:{ type:'value', min:0, max:35, axisLabel:{formatter:'{value}%'}},
+      series:[
+        { name:'Xanh', type:'line', data:[15.4,18.3,22,25.2,28.5],
+           symbol:'circle', symbolSize:8, lineStyle:{width:3,color:'#48bb78'}, areaStyle:{color:'#c6f6d5'}, itemStyle:{color:'#38a169'} },
+        { name:'Đa năng', type:'line', data:[17,22,25.5,28,32.3], symbol:'circle', symbolSize:8, lineStyle:{width:3,color:'#4299e1'}, areaStyle:{color:'#bee3f8'}, itemStyle:{color:'#3182ce'} },
+        { name:'Cao cấp', type:'line', data:[10.3,13.2,15.8,16.9,17.8], symbol:'circle', symbolSize:8, lineStyle:{width:3,color:'#ab72d1'}, areaStyle:{color:'#e9d8fd'}, itemStyle:{color:'#805ad5'} }
+      ]
+    });
+  </script>
+</body>
 </html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDllMYzRmfZcwy1kyOkGgI8OW4mpuLGja1avaGlsDrpi4GfFHibY58Flxody1KxIHVBt2PPCEBE88BoG8tBN90WBIfBQ5nu7L8Vk5szUY%2FfQ90ZuUB%2F4GqbHInxDrvC95o7eDi%2FD7nY4Bx%2BuqrIQmm0GB8A%2BpLtQqEQW6kgOSCeS29mfdPbUAGxQSc3zfMahz3C3JozAojERqoHzU8vcPO83GJ1OjpTs0O5PsiXnxbWDziVzY2apL2BDHvZDt%2FNI4kheUc3QFBeTEmMOtcmRpIDDYEyHam%2BaK491%2Bn0DwE9E3HvaULkkB3%2BDaL5Mm64YgccPK8qb0%2Bqir0Lb6WmKiFienDuJRjurguYHBZfkH0PUqPHvJdYkbY677f9lWLex%2FjCjD%2Fq9CYQdjctIeZQKzn3J30wS5fzw3hBcR5NSIavjCvNkuVhVhw1F4ppr%2FDXZKl1OZf8w1qAw1u0D3H2dCUoEFBbeItU24LXHhCg%2FK4NdaXOz55ZblhLdxLSVnLXsqEFmxBSz2MAUVvCX5NCWB%2F6w%3D";
+        window.__genspark_locale = "en-US";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDllMYzRmfZcwy1kyOkGgI8OW4mpuLGja1avaGlsDrpi4GfFHibY58Flxody1KxIHVBt2PPCEBE88BoG8tBN90WBIfBQ5nu7L8Vk5szUY/fQ90ZuUB/4GqbHInxDrvC95o7eDi/D7nY4Bx+uqrIQmm0GB8A+pLtQqEQW6kgOSCeS29mfdPbUAGxQSc3zfMahz3C3JozAojERqoHzU8vcPO83GJ1OjpTs0O5PsiXnxbWDziVzY2apL2BDHvZDt/NI4kheUc3QFBeTEmMOtcmRpIDDYEyHam+aK491+n0DwE9E3HvaULkkB3+DaL5Mm64YgccPK8qb0+qir0Lb6WmKiFienDuJRjurguYHBZfkH0PUqPHvJdYkbY677f9lWLex/jCjD/q9CYQdjctIeZQKzn3J30wS5fzw3hBcR5NSIavjCvNkuVhVhw1F4ppr/DXZKl1OZf8w1qAw1u0D3H2dCUoEFBbeItU24LXHhCg/K4NdaXOz55ZblhLdxLSVnLXsqEFmxBSz2MAUVvCX5NCWB/6w=";
+    </script>
+    
